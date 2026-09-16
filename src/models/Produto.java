@@ -1,10 +1,10 @@
+package src.models;
+
 public class Produto {
-    
     //variáveis
     private String codigo;
     private String prodName;
     private double price;
-    
     //Construtor do 'Produto'
     public Produto(String codigo, String prodName, double price){
         this.codigo = codigo;
@@ -12,7 +12,7 @@ public class Produto {
         this.price = price;
     }
     //getters
-    public String codigo(){ return codigo; }
+    public String getcodigo(){ return codigo; }
     public String getProdName(){ return prodName; }
     public double getPrice(){ return price; }
     //setters

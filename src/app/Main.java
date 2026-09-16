@@ -1,9 +1,9 @@
 package src.app;
 
-import src.model.Endereco;
-import src.model.Cliente;
-import src.model.Entrega;
-import src.model.Produto;
+import src.models.Cliente;
+import src.models.Endereco;
+import src.models.Entrega;
+import src.models.Produto;
 
 public class Main {
     public static void main(String[] args) {

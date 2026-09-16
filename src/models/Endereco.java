@@ -1,4 +1,4 @@
-package src.model;
+package src.models;
 
 public class Endereco{
     //variáveis da Classe

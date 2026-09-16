@@ -1,4 +1,4 @@
-package src.model;
+package src.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +31,15 @@ public class Entrega {
         return total;
     }
     public void exibirResumo(){
-        System.out.println("\n=====Resumo da Entrega=====");
-        System.out.println("Rastreio: "+ idRastreio + "| Status: "+ status);
+        System.out.println("\n===== Resumo da Entrega =====");
+        System.out.println("Rastreio: "+ idRastreio + " | Status: "+ status);
         System.out.println("Endereco: "+ cliente.getEnd().getEndCompleto());
         System.out.println("Destinatario: "+ cliente.getName());
         System.out.println("Itens: ");
         for(Produto p : produtos){
             System.out.println(" - " + p.getProdName()+ ": R$ "+ p.getPrice());
         }
-        System.out.println("Total da compra: R$ "+ calcularTotal());
+        System.out.printf("Total da compra: R$ %.2f%n", calcularTotal());
         System.out.println("===========================");
     }
     //getters

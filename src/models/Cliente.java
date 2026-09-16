@@ -1,4 +1,4 @@
-package src.model;
+package src.models;
 
 public class Cliente {
 
@@ -13,6 +13,7 @@ public class Cliente {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
+        this.endereco = endereco;
     }
 
     public void exibirInfo(){

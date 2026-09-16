@@ -1,15 +1,22 @@
 public class Produto {
     
     //variáveis
+    private String codigo;
     private String prodName;
-    private float price;
+    private double price;
     
     //Construtor do 'Produto'
-    public Produto(String prodName, float price){
+    public Produto(String codigo, String prodName, double price){
+        this.codigo = codigo;
         this.prodName = prodName;
         this.price = price;
     }
     //getters
+    public String codigo(){ return codigo; }
     public String getProdName(){ return prodName; }
-    public float getPrice(){ return price; }
+    public double getPrice(){ return price; }
+    //setters
+    public void setCodigo(String codigo){ this.codigo = codigo; }
+    public void setProdName(String prodName){ this.prodName = prodName; }
+    public void setPrice(double price){ this.price = price; }
 }

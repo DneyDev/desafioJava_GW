@@ -1,3 +1,5 @@
+package src.model;
+
 public class Endereco{
     //variáveis da Classe
     private String estado;

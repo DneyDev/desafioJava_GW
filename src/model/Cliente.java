@@ -1,3 +1,5 @@
+package src.model;
+
 public class Cliente {
 
     //definição de variáveis do Cliente

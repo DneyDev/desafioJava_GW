@@ -15,13 +15,18 @@ public class Entrega {
         this.produtos = new ArrayList<>();
         this.status = "Pendente";
     }
+
+    public Entrega(){
+        this.produtos = new ArrayList<>();
+        this.status = "Pendente";
+    }
     
     public void addProd(Produto produto){
         produtos.add(produto);
     }
     public void updStatus(String novoStatus){
         this.status = novoStatus;
-        System.out.println("Status de entrega: " + idRastreio + " Atualizado para: "+ status);
+        System.out.println("Status de entrega: " + idRastreio + " | Atualizado para: "+ status);
     }
     public double calcularTotal(){
         double total = 0;
@@ -37,7 +42,7 @@ public class Entrega {
         System.out.println("Destinatario: "+ cliente.getName());
         System.out.println("Itens: ");
         for(Produto p : produtos){
-            System.out.println(" - " + p.getProdName()+ ": R$ "+ p.getPrice());
+            System.out.printf(" - " + p.getProdName()+ ": R$ %.2f%n", p.getPrice());
         }
         System.out.printf("Total da compra: R$ %.2f%n", calcularTotal());
         System.out.println("===========================");

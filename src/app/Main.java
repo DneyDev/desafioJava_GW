@@ -1,15 +1,15 @@
 package src.app;
 
-import src.model.Endereco;
-import src.model.Cliente;
-import src.model.Entrega;
-import src.model.Produto;
+import src.models.Cliente;
+import src.models.Endereco;
+import src.models.Entrega;
+import src.models.Produto;
 
 public class Main {
     public static void main(String[] args) {
         //Para testar é só alterar os valores de null para o desejado
         //Ordem de info: estado, cidade, cep, rua, numero 
-        Endereco end = new Endereco("Pernambuco", "Recife", "35000-001", "Tamanduá", "35" );
+        Endereco end = new Endereco("Pernambuco", "Recife", "35000-001", "Rua Tamanduá", "35" );
         //ordem de info: name, cpf, email, end(Endereço)
         Cliente cliente = new Cliente("Sidney", "012.345.678-90", "sidney@email.com", end);
 

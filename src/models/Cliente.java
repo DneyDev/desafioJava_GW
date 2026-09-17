@@ -1,19 +1,20 @@
-package src.model;
+package src.models;
 
 public class Cliente {
 
-    //definição de variáveis do Cliente
     private String name;
     private String cpf;
     private String email;
     private Endereco endereco;
 
-    //construtor para a classe Cliente
     public Cliente(String name, String cpf, String email, Endereco endereco){
         this.name = name;
         this.cpf = cpf;
         this.email = email;
+        this.endereco = endereco;
     }
+
+    public Cliente(){}
 
     public void exibirInfo(){
         System.out.println("Nome: "+ name);
@@ -21,7 +22,7 @@ public class Cliente {
         System.out.println("Email: " + email);
         System.out.println("Endereco: "+ endereco.getEndCompleto());
     }
-    //getters
+    
     public String getName(){ return name; }
     public String getCpf(){ return cpf; }
     public String getEmail(){ return email; }

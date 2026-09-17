@@ -8,14 +8,14 @@ public class Entrega {
     private Cliente cliente;
     private List<Produto>produtos;
     private String status;
-    //construtor de Entrega
+    
     public Entrega(String idRastreio, Cliente cliente){
         this.idRastreio = idRastreio;
         this.cliente = cliente;
         this.produtos = new ArrayList<>();
         this.status = "Pendente";
     }
-    //métodos
+    
     public void addProd(Produto produto){
         produtos.add(produto);
     }
@@ -25,7 +25,7 @@ public class Entrega {
     }
     public double calcularTotal(){
         double total = 0;
-        for(Produto p : produtos){ //foreach p(produto) em Produto
+        for(Produto p : produtos){ 
             total += p.getPrice();
         }
         return total;
@@ -42,11 +42,11 @@ public class Entrega {
         System.out.printf("Total da compra: R$ %.2f%n", calcularTotal());
         System.out.println("===========================");
     }
-    //getters
+    
     public String getIdRastreio(){ return idRastreio; }
     public Cliente getCliente(){ return cliente; }
     public List<Produto> getProdutos(){ return produtos; }
-    //setters
+    
     public void setIdRastreio(String idRastreio){ this.idRastreio = idRastreio; }
     public void setCliente(Cliente cliente){ this.cliente = cliente; }
     public String getStatus(){ return status; }

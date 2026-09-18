@@ -45,7 +45,21 @@ public class Sistema {
         Cliente novoCliente = new Cliente(name, cpf, email, endCliente);
         cliente.add(novoCliente);
 
-        System.out.println("Sucesso!!");
+        System.out.println("===========================");
+    }
+    public void registrarProduto(){
+        System.out.println("===== Menu de Registro de Produto =====");
+
+        System.out.println("Insira o nome do Produto: ");
+        String prodName = leitor.next();
+        System.out.println("Descricao: ");
+        String descricao= leitor.next();
+        System.out.println("Preco:  ");
+        double price = leitor.nextDouble();
+
+        Produto novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
+        produtos.add(novoProduto);
+
         System.out.println("===========================");
     }
     

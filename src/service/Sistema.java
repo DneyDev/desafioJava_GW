@@ -10,8 +10,8 @@ public class Sistema {
 
     private List<Cliente> cliente = new ArrayList<>();
     private List<Produto> produtos = new ArrayList<>();
-    private List<Endereco> enderecos =  new ArrayList<>();
-    private List<Entrega>  entregas = new ArrayList<>();
+    //private List<Endereco> enderecos =  new ArrayList<>();
+    //private List<Entrega>  entregas = new ArrayList<>();
     private Scanner leitor;
 
     public Sistema(Scanner leitor){
@@ -22,11 +22,11 @@ public class Sistema {
 
         System.out.println("===== Menu de Cadastro =====");
         System.out.println("Insira o nome do Cliente: ");
-        String name = leitor.nextLine();
+        String name = leitor.next();
         System.out.println("CPF:  ");
-        String cpf = leitor.nextLine();
+        String cpf = leitor.next();
         System.out.println("Email: ");
-        String email= leitor.nextLine();
+        String email= leitor.next();
         System.out.println("");
 
         System.out.println("===== Endereco =====");
@@ -87,7 +87,7 @@ public class Sistema {
             System.out.println("Produto Inválido");
             return;
         }
-        leitor.nextLine(); // Limpar o buffer
+        leitor.nextLine();
 
         System.out.println("----- Resumo da Entrega -----");
         System.out.println("Cliente: "+ cliente.get(indice).getName());

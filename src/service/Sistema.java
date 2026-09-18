@@ -45,8 +45,52 @@ public class Sistema {
         Cliente novoCliente = new Cliente(name, cpf, email, endCliente);
         cliente.add(novoCliente);
 
-        System.out.println("Sucesso!!");
         System.out.println("===========================");
     }
-    
+    public void registrarProduto(){
+        System.out.println("===== Menu de Registro de Produto =====");
+
+        System.out.println("Insira o nome do Produto: ");
+        String prodName = leitor.next();
+        System.out.println("Descricao: ");
+        String descricao= leitor.next();
+        System.out.println("Preco:  ");
+        double price = leitor.nextDouble();
+
+        Produto novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
+        produtos.add(novoProduto);
+
+        System.out.println("===========================");
+    }
+    public void novaEntrega(){
+        System.out.println("===== Registar Nova Entrega =====");
+        System.out.println("Clientes: ");
+        for (int i = 0; i < cliente.size(); i++){
+            System.out.println(i +  " - " + cliente.get(i).getName());
+        }
+
+        System.out.println("Selecione o Cliente: ");
+        int indice = leitor.nextInt();
+
+        if(indice < 0 || indice >= cliente.size()){
+            System.out.println("Cliente inválido!");
+            return;
+        }
+        System.out.println("Produto(s): ");
+        for (int i = 0; i < produtos.size(); i++){
+            System.out.println(i +  " - " + produtos.get(i).getProdName());
+        }
+        System.out.println("Selecione o Produto: ");
+        int indiceProd = leitor.nextInt();
+
+        if(indiceProd < 0 || indiceProd >= produtos.size()){
+            System.out.println("Produto Inválido");
+            return;
+        }
+        leitor.nextLine(); // Limpar o buffer
+
+        System.out.println("----- Resumo da Entrega -----");
+        System.out.println("Cliente: "+ cliente.get(indice).getName());
+        System.out.println("Produto: "+ produtos.get(indiceProd).getProdName());
+    }
 }   

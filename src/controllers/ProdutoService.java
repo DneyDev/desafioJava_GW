@@ -1,4 +1,4 @@
-package src.service;
+package src.controllers;
 
 public class ProdutoService {
     

@@ -1,5 +1,5 @@
 package src.controllers;
 
-public class ProdutoService {
+public class ProdutoController {
     
 }

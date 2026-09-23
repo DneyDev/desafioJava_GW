@@ -26,22 +26,38 @@ public class Main {
             case 1:
                 do{
                     sistema.cadastroCliente();
-                    System.out.println("Deseja adicionar outro cliente? (S/N)");
-                    repetir = leitor.next();
+                    //laço de validação, se repete em produto e entrega.
+                    do {
+                        System.out.println("Deseja adicionar outro cliente? (S/N)");
+                        repetir = leitor.next();
+                        if (!repetir.equalsIgnoreCase("S") && !repetir.equalsIgnoreCase("N")) {
+                            System.out.println("Insira um caractere válido!");
+                        }
+                    } while (!repetir.equalsIgnoreCase("S") && !repetir.equalsIgnoreCase("N"));
                 }while (repetir.equalsIgnoreCase("S"));
                 break;
             case 2: 
                 do{
                     sistema.registrarProduto();
-                    System.out.println("Deseja registrar outro produto? (S/N)");
-                    repetir = leitor.next();
+                    do{
+                        System.out.println("Deseja registrar outro produto? (S/N)");
+                        repetir = leitor.next();
+                        if(!repetir.equalsIgnoreCase("S") && !repetir.equalsIgnoreCase("N")){
+                            System.out.println("Insira um caractere válido!");
+                        }
+                    }while(repetir.equalsIgnoreCase("S"));
                 }while (repetir.equalsIgnoreCase("S"));
                 break;
             case 3:
                 do{
                     sistema.novaEntrega();
-                    System.out.println("Deseja registrar outra entrega? (S/N)");
-                    repetir = leitor.next();
+                    do{
+                        System.out.println("Deseja registrar outra entrega? (S/N)");
+                        repetir = leitor.next();
+                        if(!repetir.equalsIgnoreCase("S") && repetir.equalsIgnoreCase("N")){
+                            System.out.println("Insira um caractere válido!");
+                        }
+                    }while(repetir.equalsIgnoreCase("S"));
                 }while(repetir.equalsIgnoreCase("S"));
                 break;
             case 4:

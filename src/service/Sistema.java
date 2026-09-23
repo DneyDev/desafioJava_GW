@@ -2,6 +2,8 @@ package src.service;
 
 import java.util.Scanner;
 import src.models.*;
+import src.validation.ClienteValid;
+import src.validation.ProdutoValid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,16 @@ public class Sistema {
 
         Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
         Cliente novoCliente = new Cliente(name, cpf, email, endCliente);
+
+        //Validação para interromper o fluxo caso dê erro
+        ClienteValid clienteValid = new ClienteValid();
+        List<String> erros = clienteValid.validar(novoCliente);
+        if(!erros.isEmpty()){
+            System.out.println("Não foi possível registrar o Cliente: ");
+            erros.forEach(erro -> System.out.println("- "+ erro));
+            return;
+        }
+
         cliente.add(novoCliente);
 
         System.out.println("===========================");
@@ -58,6 +70,15 @@ public class Sistema {
         double price = leitor.nextDouble();
 
         Produto novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
+
+        //validação para Produto
+        ProdutoValid produtoValid = new ProdutoValid();
+        List<String>erros = produtoValid.validar(novoProduto);
+        if(!erros.isEmpty()){
+            System.out.println("Não foi possível registrar o Produto: ");
+            erros.forEach(erro -> System.out.println("- "+ erro));
+            return;
+        }
         produtos.add(novoProduto);
 
         System.out.println("===========================");

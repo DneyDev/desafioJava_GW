@@ -1,6 +1,7 @@
 package src.service;
 
 import java.util.Scanner;
+import java.util.UUID;
 import src.models.*;
 import src.validation.ClienteValid;
 import src.validation.ProdutoValid;
@@ -13,7 +14,7 @@ public class Sistema {
     private List<Cliente> cliente = new ArrayList<>();
     private List<Produto> produtos = new ArrayList<>();
     //private List<Endereco> enderecos =  new ArrayList<>();
-    //private List<Entrega>  entregas = new ArrayList<>();
+    private List<Entrega>  entregas = new ArrayList<>();
     private Scanner leitor;
 
     public Sistema(Scanner leitor){
@@ -22,41 +23,41 @@ public class Sistema {
 
     public void cadastroCliente(){
 
+        ClienteValid clienteValid = new ClienteValid();
+        
         System.out.println("===== Menu de Cadastro =====");
         System.out.println("Insira o nome do Cliente: ");
-        String name = leitor.next();
+        String name = leitor.nextLine();
         System.out.println("CPF:  ");
-        String cpf = leitor.next();
+        String cpf = leitor.nextLine();
         System.out.println("Email: ");
-        String email= leitor.next();
+        String email = leitor.nextLine();
         System.out.println("");
 
         System.out.println("===== Endereco =====");
         System.out.println("Estado: ");
-        String estado = leitor.next();
+        String estado = leitor.nextLine();
         System.out.println("Cidade: ");
-        String cidade = leitor.next();
+        String cidade = leitor.nextLine();
         System.out.println("CEP: ");
-        String cep = leitor.next();
+        String cep = leitor.nextLine();
         System.out.println("Rua: ");
-        String rua = leitor.next();
+        String rua = leitor.nextLine();
         System.out.println("Numero: ");
-        String numero = leitor.next();
+        String numero = leitor.nextLine();
 
         Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
         Cliente novoCliente = new Cliente(name, cpf, email, endCliente);
 
-        //Validação para interromper o fluxo caso dê erro
-        ClienteValid clienteValid = new ClienteValid();
+        
         List<String> erros = clienteValid.validar(novoCliente);
         if(!erros.isEmpty()){
-            System.out.println("Não foi possível registrar o Cliente: ");
-            erros.forEach(erro -> System.out.println("- "+ erro));
+            System.out.println("Não foi possível cadastrar o cliente:");
+            erros.forEach(erro -> System.out.println("- " + erro));
             return;
         }
 
         cliente.add(novoCliente);
-
         System.out.println("===========================");
     }
     public void registrarProduto(){
@@ -110,8 +111,13 @@ public class Sistema {
         }
         leitor.nextLine();
 
-        System.out.println("----- Resumo da Entrega -----");
-        System.out.println("Cliente: "+ cliente.get(indice).getName());
-        System.out.println("Produto: "+ produtos.get(indiceProd).getProdName());
+        String idRastreio = UUID.randomUUID().toString();
+        Entrega novaEntrega = new Entrega(idRastreio, cliente.get(indice));
+        novaEntrega.addProd(produtos.get(indiceProd));
+        entregas.add(novaEntrega);
+
+        //System.out.println("----- Resumo da Entrega -----");
+        //System.out.println("Cliente: "+ cliente.get(indice).getName());
+        //System.out.println("Produto: "+ produtos.get(indiceProd).getProdName());
     }
 }   

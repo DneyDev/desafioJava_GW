@@ -33,6 +33,14 @@ public class ClienteValid implements Valid<Cliente> {
         if (!EMAIL_REGEX.matcher(email).matches()) return "Email inválido! Ex: nome@dominio.com";
         return null;
     }
+    public String validarEstado(String estado) {
+        String erro = validarCampo(estado, "Estado");
+        if (erro != null) return erro;
+        if (!CodRastreioGen.estadoValido(estado)) {
+            return "Estado inválido! Use a sigla (ex: PE) ou o nome completo.";
+        }
+        return null;
+    }
 
     @Override
     public List<String> validar(Cliente cliente) {
@@ -42,16 +50,16 @@ public class ClienteValid implements Valid<Cliente> {
         addSeErro(erros, validarEmail(cliente.getEmail()));
 
         Endereco end = cliente.getEnd();
-    if (end == null) {
-        erros.add("Erro: Endereço é obrigatório!");
-    } else {
-        addSeErro(erros, validarCampo(end.getEstado(), "Estado"));
-        addSeErro(erros, validarCampo(end.getCidade(), "Cidade"));
-        addSeErro(erros, validarCampo(end.getCep(), "CEP"));
-        addSeErro(erros, validarCampo(end.getRua(), "Rua"));
-        addSeErro(erros, validarCampo(end.getNumero(), "Número"));
-    }
-        return erros;
+        if (end == null) {
+            erros.add("Erro: Endereço é obrigatório!");
+        } else {
+            addSeErro(erros, validarEstado(end.getEstado()));
+            addSeErro(erros, validarCampo(end.getCidade(), "Cidade"));
+            addSeErro(erros, validarCampo(end.getCep(), "CEP"));
+            addSeErro(erros, validarCampo(end.getRua(), "Rua"));
+            addSeErro(erros, validarCampo(end.getNumero(), "Número"));
+        }
+            return erros;
     }
 
     private void addSeErro(List<String> erros, String erro) {

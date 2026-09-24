@@ -1,7 +1,9 @@
 package src.service;
 
 import java.util.Scanner;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
+import src.utils.CodRastreioGen;
 import src.models.*;
 import src.validation.ClienteValid;
 import src.validation.EntregaValid;
@@ -134,8 +136,12 @@ public class Sistema {
             return;
         }
 
-        Entrega novaEntrega = new Entrega(UUID.randomUUID().toString(), cliente.get(indice));
+        Set<String> existentes = entregas.stream()
+        .map(Entrega::getIdRastreio)
+        .collect(Collectors.toSet());
 
+        String codigo = CodRastreioGen.gerar(cliente.get(indice).getEnd().getEstado(), existentes);
+        Entrega novaEntrega = new Entrega(codigo, cliente.get(indice));
         do {
             System.out.println("Produto(s): ");
             for (int i = 0; i < produtos.size(); i++) {

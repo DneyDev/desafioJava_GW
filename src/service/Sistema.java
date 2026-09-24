@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.UUID;
 import src.models.*;
 import src.validation.ClienteValid;
+import src.validation.EntregaValid;
 import src.validation.ProdutoValid;
 
 import java.util.ArrayList;
@@ -20,104 +21,143 @@ public class Sistema {
     public Sistema(Scanner leitor){
         this.leitor = leitor;
     }
+    private int lerInt(String msg) {
+        while (true) {
+            System.out.println(msg);
+            try {
+                return Integer.parseInt(leitor.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Digite um número inteiro válido!");
+            }
+        }
+    }
+    private boolean lerSN(String msg) {
+        while (true) {
+            System.out.println(msg + " (S/N)");
+            String r = leitor.nextLine().trim();
+            if (r.equalsIgnoreCase("S")) return true;
+            if (r.equalsIgnoreCase("N")) return false;
+            System.out.println("Insira um caractere válido!");
+        }
+    }
 
     public void cadastroCliente(){
-
+        
         ClienteValid clienteValid = new ClienteValid();
-        
-        System.out.println("===== Menu de Cadastro =====");
-        System.out.println("Insira o nome do Cliente: ");
-        String name = leitor.nextLine();
-        System.out.println("CPF:  ");
-        String cpf = leitor.nextLine();
-        System.out.println("Email: ");
-        String email = leitor.nextLine();
-        System.out.println("");
+        List<String>erros;
+        Cliente novoCliente;
 
-        System.out.println("===== Endereco =====");
-        System.out.println("Estado: ");
-        String estado = leitor.nextLine();
-        System.out.println("Cidade: ");
-        String cidade = leitor.nextLine();
-        System.out.println("CEP: ");
-        String cep = leitor.nextLine();
-        System.out.println("Rua: ");
-        String rua = leitor.nextLine();
-        System.out.println("Numero: ");
-        String numero = leitor.nextLine();
+        do{   
+            System.out.println("===== Menu de Cadastro =====");
+            System.out.println("Insira o nome do Cliente: ");
+            String name = leitor.nextLine().trim();
+            System.out.println("CPF:  ");
+            String cpf = leitor.nextLine().trim();
+            System.out.println("Email: ");
+            String email = leitor.nextLine().trim();
+            System.out.println("");
 
-        Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
-        Cliente novoCliente = new Cliente(name, cpf, email, endCliente);
+            System.out.println("===== Endereco =====");
+            System.out.println("Estado: ");
+            String estado = leitor.nextLine().trim();
+            System.out.println("Cidade: ");
+            String cidade = leitor.nextLine().trim();
+            System.out.println("CEP: ");
+            String cep = leitor.nextLine().trim();
+            System.out.println("Rua: ");
+            String rua = leitor.nextLine().trim();
+            System.out.println("Numero: ");
+            String numero = leitor.nextLine().trim();
 
-        
-        List<String> erros = clienteValid.validar(novoCliente);
-        if(!erros.isEmpty()){
-            System.out.println("Não foi possível cadastrar o cliente:");
-            erros.forEach(erro -> System.out.println("- " + erro));
-            return;
-        }
+            Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
+            novoCliente = new Cliente(name, cpf, email, endCliente);    
+
+            
+            erros = clienteValid.validar(novoCliente);
+            if(!erros.isEmpty()){
+                System.out.println("Não foi possível cadastrar o cliente:");
+                erros.forEach(erro -> System.out.println("- " + erro));
+            }
+        }while(!erros.isEmpty());    
 
         cliente.add(novoCliente);
         System.out.println("===========================");
+        
     }
-    public void registrarProduto(){
-        System.out.println("===== Menu de Registro de Produto =====");
-
-        System.out.println("Insira o nome do Produto: ");
-        String prodName = leitor.next();
-        System.out.println("Descricao: ");
-        String descricao= leitor.next();
-        System.out.println("Preco:  ");
-        double price = leitor.nextDouble();
-
-        Produto novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
-
-        //validação para Produto
+    public void registrarProduto() {
         ProdutoValid produtoValid = new ProdutoValid();
-        List<String>erros = produtoValid.validar(novoProduto);
-        if(!erros.isEmpty()){
-            System.out.println("Não foi possível registrar o Produto: ");
-            erros.forEach(erro -> System.out.println("- "+ erro));
+        Produto novoProduto;
+        List<String> erros;
+
+        do {
+            System.out.println("===== Menu de Registro de Produto =====");
+            System.out.println("Insira o nome do Produto: ");
+            String prodName = leitor.nextLine().trim();
+            System.out.println("Descricao: ");
+            String descricao = leitor.nextLine().trim();
+            System.out.println("Preco: ");
+
+            double price = 0;
+            try {
+                price = Double.parseDouble(leitor.nextLine().trim().replace(",", "."));
+            } catch (NumberFormatException e) {
+                // fica 0; o ProdutoValid rejeita
+            }
+
+            novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
+            erros = produtoValid.validar(novoProduto);
+            if (!erros.isEmpty()) {
+                System.out.println("Dados inválidos, preencha novamente:");
+                erros.forEach(e -> System.out.println("- " + e));
+            }
+        } while (!erros.isEmpty());
+
+        produtos.add(novoProduto);
+        System.out.println("Produto registrado com sucesso!");
+    }
+    
+    public void novaEntrega() {
+        System.out.println("===== Registrar Nova Entrega =====");
+
+        if (cliente.isEmpty() || produtos.isEmpty()) {
+            System.out.println("Cadastre ao menos um cliente e um produto antes de registrar uma entrega.");
             return;
         }
-        produtos.add(novoProduto);
 
-        System.out.println("===========================");
-    }
-    public void novaEntrega(){
-        System.out.println("===== Registar Nova Entrega =====");
         System.out.println("Clientes: ");
-        for (int i = 0; i < cliente.size(); i++){
-            System.out.println(i +  " - " + cliente.get(i).getName());
+        for (int i = 0; i < cliente.size(); i++) {
+            System.out.println(i + " - " + cliente.get(i).getName());
         }
-
-        System.out.println("Selecione o Cliente: ");
-        int indice = leitor.nextInt();
-
-        if(indice < 0 || indice >= cliente.size()){
+        int indice = lerInt("Selecione o Cliente: ");
+        if (indice < 0 || indice >= cliente.size()) {
             System.out.println("Cliente inválido!");
             return;
         }
-        System.out.println("Produto(s): ");
-        for (int i = 0; i < produtos.size(); i++){
-            System.out.println(i +  " - " + produtos.get(i).getProdName());
-        }
-        System.out.println("Selecione o Produto: ");
-        int indiceProd = leitor.nextInt();
 
-        if(indiceProd < 0 || indiceProd >= produtos.size()){
-            System.out.println("Produto Inválido");
+        Entrega novaEntrega = new Entrega(UUID.randomUUID().toString(), cliente.get(indice));
+
+        do {
+            System.out.println("Produto(s): ");
+            for (int i = 0; i < produtos.size(); i++) {
+                System.out.println(i + " - " + produtos.get(i).getProdName());
+            }
+            int indiceProd = lerInt("Selecione o Produto: ");
+            if (indiceProd < 0 || indiceProd >= produtos.size()) {
+                System.out.println("Produto inválido!");
+            } else {
+                novaEntrega.addProd(produtos.get(indiceProd));
+                System.out.println("Produto adicionado.");
+            }
+        } while (lerSN("Adicionar outro produto a esta entrega?"));
+
+        List<String> erros = new EntregaValid().validar(novaEntrega);
+        if (!erros.isEmpty()) {
+            erros.forEach(e -> System.out.println("- " + e));
             return;
         }
-        leitor.nextLine();
 
-        String idRastreio = UUID.randomUUID().toString();
-        Entrega novaEntrega = new Entrega(idRastreio, cliente.get(indice));
-        novaEntrega.addProd(produtos.get(indiceProd));
         entregas.add(novaEntrega);
-
-        //System.out.println("----- Resumo da Entrega -----");
-        //System.out.println("Cliente: "+ cliente.get(indice).getName());
-        //System.out.println("Produto: "+ produtos.get(indiceProd).getProdName());
+        System.out.println("Entrega registrada com sucesso!");
+        novaEntrega.exibirResumo();
     }
 }   

@@ -1,37 +1,49 @@
 # Sistema GW POO
 
-Projeto desenvolvido em Java para praticar fundamentos de programação orientada a objetos. O sistema funciona no terminal e permite cadastrar clientes, registrar produtos e selecionar os dados de uma nova entrega.
+Projeto Java desenvolvido para praticar programação orientada a objetos com foco em cadastro de clientes, registro de produtos e gerenciamento de entregas por terminal.
 
 ## Funcionalidades
 
-- Cadastro de clientes com nome, CPF, e-mail e endereço.
+- Cadastro de clientes com nome, CPF, e-mail e endereço completo.
 - Registro de produtos com nome, descrição e preço.
-- Seleção de cliente e produto para exibir um resumo de entrega.
-- Repetição dos cadastros e do registro de entregas pelo menu.
-- Validação de índices de cliente e produto.
-- Encerramento do sistema pela opção `4`.
+- Criação de entregas vinculando um cliente a um ou mais produtos.
+- Exibição do resumo da entrega com rastreio, endereço, destinatário e total.
+- Validação básica de dados de entrada.
+- Menu interativo para repetir operações até o usuário encerrar o programa.
 
 ## Estrutura do projeto
 
 ```text
 src/
 ├── app/
-│   └── Main.java          # Ponto de entrada e menu principal
+│   └── Main.java                 # Ponto de entrada da aplicação e menu principal
+├── controllers/
+│   ├── ClienteController.java     # *Próxima fase a realizar*
+│   └── ProdutoController.java     # *Próxima fase a realizar*
 ├── models/
-│   ├── Cliente.java       # Dados e operações de clientes
-│   ├── Endereco.java      # Dados e formatação de endereços
-│   ├── Entrega.java       # Status, produtos e total da entrega
-│   └── Produto.java       # Dados e operações de produtos
-└── service/
-	└── Sistema.java       # Cadastro e fluxo principal do sistema
+│   ├── Cliente.java               # Modelo do cliente
+│   ├── Endereco.java              # Modelo do endereço
+│   ├── Entrega.java               # Modelo da entrega e cálculo do total
+│   └── Produto.java               # Modelo do produto
+├── service/
+│   └── Sistema.java               # Lógica principal do sistema
+├── utils/
+│   └── cpfUtil.java               # Utilitário para CPF (ainda em desenvolvimento)
+├── validation/
+│   ├── ClienteValid.java          # Validação de cliente
+│   ├── EntregaValid.java          # Validação de entrega
+│   ├── ProdutoValid.java          # Validação de produto
+│   └── Valid.java                 # Interface genérica de validação
+└── db/
+    └── (estrutura para persistência local, se necessário)
 ```
 
 ## Como executar
 
-Na raiz do projeto, compile os arquivos:
+Na raiz do projeto, compile todos os arquivos Java:
 
 ```bash
-javac -d out src/models/*.java src/service/Sistema.java src/app/Main.java
+find src -name '*.java' -print0 | xargs -0 javac -d out
 ```
 
 Depois, execute a aplicação:
@@ -44,7 +56,7 @@ Também é possível abrir o projeto em uma IDE Java e executar a classe `src.ap
 
 ## Como usar
 
-Ao iniciar, o menu oferece estas opções:
+Ao iniciar o programa, o menu principal oferece as opções:
 
 ```text
 1 - Cadastrar Cliente
@@ -53,13 +65,27 @@ Ao iniciar, o menu oferece estas opções:
 4 - Sair
 ```
 
-Para registrar uma entrega, cadastre pelo menos um cliente e um produto. O sistema apresenta as listas cadastradas, solicita os índices correspondentes e exibe o resumo com o cliente e o produto escolhidos.
+Fluxo típico:
+
+1. Cadastre pelo menos um cliente.
+2. Cadastre pelo menos um produto.
+3. Selecione o cliente e o produto para registrar a entrega.
+4. O sistema mostra o resumo da entrega com o total calculado.
+5. O menu volta para nova operação ou encerra ao escolher `4`.
+
+## Observações importantes
+
+- O projeto funciona em modo terminal.
+- A entrada é feita via `Scanner` no console.
+- A validação de CPF ainda precisa ser reforçada para uma validação real e completa.
+- O sistema foi estruturado como prática de orientação a objetos e não como aplicação de produção.
 
 ## Conceitos praticados
 
-- Classes, objetos, atributos e métodos.
-- Encapsulamento com atributos privados, getters e setters.
-- Associação entre `Cliente`, `Endereco`, `Produto` e `Entrega`.
+- Classes, atributos e métodos.
+- Encapsulamento com getters e setters.
+- Associação entre objetos (`Cliente`, `Endereco`, `Produto`, `Entrega`).
 - Coleções com `ArrayList` e `List`.
-- Entrada de dados com `Scanner`.
+- Entrada e saída em console com `Scanner`.
 - Estruturas condicionais e de repetição.
+- Validação de dados em classes separadas.

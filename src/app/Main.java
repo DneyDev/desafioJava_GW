@@ -26,6 +26,7 @@ public class Main {
         } while (!r.equalsIgnoreCase("S") && !r.equalsIgnoreCase("N"));
         return r.equalsIgnoreCase("S");
     }
+    
 
     public static void main(String[] args) {
         Sistema sistema = new Sistema(leitor);

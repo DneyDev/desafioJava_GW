@@ -44,48 +44,86 @@ public class Sistema {
     }
 
     public void cadastroCliente(){
-        
+
         ClienteValid clienteValid = new ClienteValid();
-        List<String>erros;
-        Cliente novoCliente;
+        String erro;
 
-        do{   
-            System.out.println("===== Menu de Cadastro =====");
+        System.out.println("===== Menu de Cadastro =====");
+
+        String name;
+        do {
             System.out.println("Insira o nome do Cliente: ");
-            String name = leitor.nextLine().trim();
+            name = leitor.nextLine().trim();
+            erro = clienteValid.validarNome(name);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        String cpf;
+        do {
             System.out.println("CPF:  ");
-            String cpf = leitor.nextLine().trim();
+            cpf = leitor.nextLine().trim();
+            erro = clienteValid.validarCpf(cpf);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        String email;
+        do {
             System.out.println("Email: ");
-            String email = leitor.nextLine().trim();
-            System.out.println("");
+            email = leitor.nextLine().trim();
+            erro = clienteValid.validarEmail(email);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
 
-            System.out.println("===== Endereco =====");
+        System.out.println("");
+        System.out.println("===== Endereco =====");
+
+        String estado;
+        do {
             System.out.println("Estado: ");
-            String estado = leitor.nextLine().trim();
+            estado = leitor.nextLine().trim();
+            erro = clienteValid.validarEstado(estado);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        String cidade;
+        do {
             System.out.println("Cidade: ");
-            String cidade = leitor.nextLine().trim();
+            cidade = leitor.nextLine().trim();
+            erro = clienteValid.validarCidade(cidade);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        String cep;
+        do {
             System.out.println("CEP: ");
-            String cep = leitor.nextLine().trim();
+            cep = leitor.nextLine().trim();
+            erro = clienteValid.validarCampo(cep, "CEP");
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        String rua;
+        do {
             System.out.println("Rua: ");
-            String rua = leitor.nextLine().trim();
+            rua = leitor.nextLine().trim();
+            erro = clienteValid.validarCampo(rua, "Rua");
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        String numero;
+        do {
             System.out.println("Numero: ");
-            String numero = leitor.nextLine().trim();
+            numero = leitor.nextLine().trim();
+            erro = clienteValid.validarCampo(numero, "Número");
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
 
-            Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
-            novoCliente = new Cliente(name, cpf, email, endCliente);    
+        Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
+        cliente.add(new Cliente(name, cpf, email, endCliente));
 
-            
-            erros = clienteValid.validar(novoCliente);
-            if(!erros.isEmpty()){
-                System.out.println("Não foi possível cadastrar o cliente:");
-                erros.forEach(erro -> System.out.println("- " + erro));
-            }
-        }while(!erros.isEmpty());    
-
-        cliente.add(novoCliente);
+        System.out.println("Cliente cadastrado com sucesso!");
         System.out.println("===========================");
-        
     }
+
     public void registrarProduto() {
         ProdutoValid produtoValid = new ProdutoValid();
         Produto novoProduto;

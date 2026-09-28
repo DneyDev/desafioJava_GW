@@ -11,14 +11,31 @@ public class ClienteValid implements Valid<Cliente> {
 
     public static final Pattern EMAIL_REGEX =
         Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-z]{2,}$", Pattern.CASE_INSENSITIVE);
+    public static final Pattern NOME_REGEX =
+        Pattern.compile("^[\\p{L}]+([ '\\-][\\p{L}]+)*$");
+    // \p{L} aceita qualquer letra, inclusive acentuadas (á, ã, ç, é...).
+    // ([ '\\-][\\p{L}]+)* permite espaços, apóstrofo e hífen entre as palavras, mas impede que o nome começe ou termine com esses símbolos
 
     public String validarCampo(String valor, String nomeCampo){
-        if (valor == null || valor.isBlank()) return nomeCampo + " é obrigatório!";
+        if (valor == null || valor.isEmpty()) return nomeCampo + " é obrigatório!";
         return null;
     }
 
-    public String validarNome(String nome){ 
-        return validarCampo(nome, "Nome"); 
+    public String validarNome(String nome) {
+        String erro = validarCampo(nome, "Nome");
+        if (erro != null) return erro;
+        if (!NOME_REGEX.matcher(nome.trim()).matches()) {
+            return "Nome inválido! Use apenas letras e espaços (sem números).";
+        }
+        return null;
+    }
+    public String validarCidade(String cidade) {
+        String erro = validarCampo(cidade, "Cidade");
+        if (erro != null) return erro;
+        if (!NOME_REGEX.matcher(cidade).matches()) {
+            return "Cidade inválida! Use apenas letras.";
+        }
+        return null;
     }
     public String validarCpf(String cpf){
         String erro = validarCampo(cpf, "CPF");
@@ -37,7 +54,7 @@ public class ClienteValid implements Valid<Cliente> {
         String erro = validarCampo(estado, "Estado");
         if (erro != null) return erro;
         if (!CodRastreioGen.estadoValido(estado)) {
-            return "Estado inválido! Use a sigla (ex: PE) ou o nome completo.";
+            return "Estado inválido! Use a sigla (ex: PE) ou o nome do estado completo.";
         }
         return null;
     }
@@ -54,7 +71,7 @@ public class ClienteValid implements Valid<Cliente> {
             erros.add("Erro: Endereço é obrigatório!");
         } else {
             addSeErro(erros, validarEstado(end.getEstado()));
-            addSeErro(erros, validarCampo(end.getCidade(), "Cidade"));
+            addSeErro(erros, validarCidade(end.getCidade()));
             addSeErro(erros, validarCampo(end.getCep(), "CEP"));
             addSeErro(erros, validarCampo(end.getRua(), "Rua"));
             addSeErro(erros, validarCampo(end.getNumero(), "Número"));

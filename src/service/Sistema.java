@@ -1,28 +1,29 @@
 package src.service;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
-import src.utils.CodRastreioGen;
+import src.controllers.ClienteController;
+import src.controllers.ProdutoController;
 import src.models.*;
-import src.validation.ClienteValid;
+import src.utils.CodRastreioGen;
 import src.validation.EntregaValid;
-import src.validation.ProdutoValid;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Sistema {
 
-    private List<Cliente> cliente = new ArrayList<>();
-    private List<Produto> produtos = new ArrayList<>();
-    //private List<Endereco> enderecos =  new ArrayList<>();
-    private List<Entrega>  entregas = new ArrayList<>();
+    private ClienteController clienteController;
+    private ProdutoController produtoController;
+    private List<Entrega> entregas = new ArrayList<>();
     private Scanner leitor;
 
-    public Sistema(Scanner leitor){
+    public Sistema(Scanner leitor) {
         this.leitor = leitor;
+        this.clienteController = new ClienteController(leitor);
+        this.produtoController = new ProdutoController(leitor);
     }
+
     private int lerInt(String msg) {
         while (true) {
             System.out.println(msg);
@@ -33,6 +34,7 @@ public class Sistema {
             }
         }
     }
+
     private boolean lerSN(String msg) {
         while (true) {
             System.out.println(msg + " (S/N)");
@@ -43,105 +45,42 @@ public class Sistema {
         }
     }
 
-    public void cadastroCliente(){
-        
-        ClienteValid clienteValid = new ClienteValid();
-        List<String>erros;
-        Cliente novoCliente;
-
-        do{   
-            System.out.println("===== Menu de Cadastro =====");
-            System.out.println("Insira o nome do Cliente: ");
-            String name = leitor.nextLine().trim();
-            System.out.println("CPF:  ");
-            String cpf = leitor.nextLine().trim();
-            System.out.println("Email: ");
-            String email = leitor.nextLine().trim();
-            System.out.println("");
-
-            System.out.println("===== Endereco =====");
-            System.out.println("Estado: ");
-            String estado = leitor.nextLine().trim();
-            System.out.println("Cidade: ");
-            String cidade = leitor.nextLine().trim();
-            System.out.println("CEP: ");
-            String cep = leitor.nextLine().trim();
-            System.out.println("Rua: ");
-            String rua = leitor.nextLine().trim();
-            System.out.println("Numero: ");
-            String numero = leitor.nextLine().trim();
-
-            Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
-            novoCliente = new Cliente(name, cpf, email, endCliente);    
-
-            
-            erros = clienteValid.validar(novoCliente);
-            if(!erros.isEmpty()){
-                System.out.println("Não foi possível cadastrar o cliente:");
-                erros.forEach(erro -> System.out.println("- " + erro));
-            }
-        }while(!erros.isEmpty());    
-
-        cliente.add(novoCliente);
-        System.out.println("===========================");
-        
+    public void cadastroCliente() {
+        clienteController.cadastrar();
     }
+
     public void registrarProduto() {
-        ProdutoValid produtoValid = new ProdutoValid();
-        Produto novoProduto;
-        List<String> erros;
-
-        do {
-            System.out.println("===== Menu de Registro de Produto =====");
-            System.out.println("Insira o nome do Produto: ");
-            String prodName = leitor.nextLine().trim();
-            System.out.println("Descricao: ");
-            String descricao = leitor.nextLine().trim();
-            System.out.println("Preco: ");
-
-            double price = 0;
-            try {
-                price = Double.parseDouble(leitor.nextLine().trim().replace(",", "."));
-            } catch (NumberFormatException e) {
-                // fica 0; o ProdutoValid rejeita
-            }
-
-            novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
-            erros = produtoValid.validar(novoProduto);
-            if (!erros.isEmpty()) {
-                System.out.println("Dados inválidos, preencha novamente:");
-                erros.forEach(e -> System.out.println("- " + e));
-            }
-        } while (!erros.isEmpty());
-
-        produtos.add(novoProduto);
-        System.out.println("Produto registrado com sucesso!");
+        produtoController.registrar();
     }
-    
+
     public void novaEntrega() {
         System.out.println("===== Registrar Nova Entrega =====");
 
-        if (cliente.isEmpty() || produtos.isEmpty()) {
+        List<Cliente> clientes = clienteController.getClientes();
+        List<Produto> produtos = produtoController.getProdutos();
+
+        if (clientes.isEmpty() || produtos.isEmpty()) {
             System.out.println("Cadastre ao menos um cliente e um produto antes de registrar uma entrega.");
             return;
         }
 
         System.out.println("Clientes: ");
-        for (int i = 0; i < cliente.size(); i++) {
-            System.out.println(i + " - " + cliente.get(i).getName());
+        for (int i = 0; i < clientes.size(); i++) {
+            System.out.println(i + " - " + clientes.get(i).getName());
         }
         int indice = lerInt("Selecione o Cliente: ");
-        if (indice < 0 || indice >= cliente.size()) {
+        if (indice < 0 || indice >= clientes.size()) {
             System.out.println("Cliente inválido!");
             return;
         }
 
         Set<String> existentes = entregas.stream()
-        .map(Entrega::getIdRastreio)
-        .collect(Collectors.toSet());
+            .map(Entrega::getIdRastreio)
+            .collect(Collectors.toSet());
 
-        String codigo = CodRastreioGen.gerar(cliente.get(indice).getEnd().getEstado(), existentes);
-        Entrega novaEntrega = new Entrega(codigo, cliente.get(indice));
+        String codigo = CodRastreioGen.gerar(clientes.get(indice).getEnd().getEstado(), existentes);
+        Entrega novaEntrega = new Entrega(codigo, clientes.get(indice));
+
         do {
             System.out.println("Produto(s): ");
             for (int i = 0; i < produtos.size(); i++) {
@@ -166,4 +105,4 @@ public class Sistema {
         System.out.println("Entrega registrada com sucesso!");
         novaEntrega.exibirResumo();
     }
-}   
+}

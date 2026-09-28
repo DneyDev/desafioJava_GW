@@ -8,8 +8,8 @@ Projeto Java desenvolvido para praticar programação orientada a objetos com fo
 - Registro de produtos com nome, descrição e preço.
 - Criação de entregas vinculando um cliente a um ou mais produtos.
 - Exibição do resumo da entrega com rastreio, endereço, destinatário e total.
-- Validação básica de dados de entrada.
-- Menu interativo para repetir operações até o usuário encerrar o programa.
+- Validação básica de dados de entrada, feitos em cada etapa.
+- Menu interativo via terminal para repetir operações até o usuário encerrar o programa.
 
 ## Estrutura do projeto
 
@@ -18,8 +18,8 @@ src/
 ├── app/
 │   └── Main.java                 # Ponto de entrada da aplicação e menu principal
 ├── controllers/
-│   ├── ClienteController.java     # *Próxima fase a realizar*
-│   └── ProdutoController.java     # *Próxima fase a realizar*
+│   ├── ClienteController.java     # Cadastro de Clientes
+│   └── ProdutoController.java     # Cadastro de Produtos
 ├── models/
 │   ├── Cliente.java               # Modelo do cliente
 │   ├── Endereco.java              # Modelo do endereço

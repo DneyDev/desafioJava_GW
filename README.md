@@ -28,7 +28,8 @@ src/
 ├── service/
 │   └── Sistema.java               # Lógica principal do sistema
 ├── utils/
-│   └── cpfUtil.java               # Utilitário para CPF (ainda em desenvolvimento)
+|   ├── CodRastreioGen.java        # Utilitário para geração de códigos de rastreio de encomendas
+│   └── cpfUtil.java               # Utilitário para CPF
 ├── validation/
 │   ├── ClienteValid.java          # Validação de cliente
 │   ├── EntregaValid.java          # Validação de entrega

@@ -16,7 +16,7 @@ public class Produto {
 
     public Produto(){}
     
-    public int getcodigo(){ return codigo; }
+    public int getCodigo(){ return codigo; }
     public String getProdName(){ return prodName; }
     public double getPrice(){ return price; }
     public String getDesc(){ return descricao; }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 import src.models.Produto;
 import src.validation.ProdutoValid;
+import java.math.BigDecimal;
 
 public class ProdutoController {
 
@@ -28,11 +29,11 @@ public class ProdutoController {
             String descricao = leitor.nextLine().trim();
             System.out.println("Preco: ");
 
-            double price = 0;
+            BigDecimal price = null;
             try {
-                price = Double.parseDouble(leitor.nextLine().trim().replace(",", "."));
+                price = new BigDecimal(leitor.nextLine().trim().replace(",", "."));
             } catch (NumberFormatException e) {
-                // fica 0; o ProdutoValid rejeita
+                // fica null; o ProdutoValid rejeita
             }
 
             novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);

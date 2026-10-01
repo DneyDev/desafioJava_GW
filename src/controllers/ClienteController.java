@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Scanner;
 import src.models.Cliente;
 import src.models.Endereco;
+import src.utils.CodRastreioGen;
+import src.utils.CpfUtil;
 import src.validation.ClienteValid;
+import java.sql.SQLException;
+import src.db.ClienteDao;
 
 public class ClienteController {
 
@@ -15,7 +19,16 @@ public class ClienteController {
     public ClienteController(Scanner leitor) {
         this.leitor = leitor;
     }
+    private final ClienteDao clienteDao = new ClienteDao();
 
+    private boolean cpfJaCadastrado(String cpfLimpo) {
+        try {
+            return clienteDao.existePorCpf(cpfLimpo);
+        } catch (SQLException e) {
+            System.out.println("Erro ao consultar o banco: " + e.getMessage());
+            return false;
+        }
+    }
     public void cadastrar() {
         ClienteValid clienteValid = new ClienteValid();
         String erro;
@@ -35,7 +48,9 @@ public class ClienteController {
             System.out.println("CPF: ");
             cpf = leitor.nextLine().trim();
             erro = clienteValid.validarCpf(cpf);
-            if (erro != null) System.out.println("Erro: " + erro);
+            if (erro == null && cpfJaCadastrado(CpfUtil.limpar(cpf))) {
+                erro = "Já existe um cliente com esse CPF!";
+            }
         } while (erro != null);
 
         String email;
@@ -45,6 +60,8 @@ public class ClienteController {
             erro = clienteValid.validarEmail(email);
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
+
+        cpf = CpfUtil.limpar(cpf);
 
         System.out.println("");
         System.out.println("===== Endereco =====");
@@ -69,15 +86,18 @@ public class ClienteController {
         do {
             System.out.println("CEP: ");
             cep = leitor.nextLine().trim();
-            erro = clienteValid.validarCampo(cep, "CEP");
+            erro = clienteValid.validarCep(cep);
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
+
+        estado = CodRastreioGen.paraSigla(estado);
+        cep = cep.replaceAll("\\D", "");
 
         String rua;
         do {
             System.out.println("Rua: ");
             rua = leitor.nextLine().trim();
-            erro = clienteValid.validarCampo(rua, "Rua");
+            erro = clienteValid.validarCampo(rua, "Rua", 255);
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
@@ -85,12 +105,28 @@ public class ClienteController {
         do {
             System.out.println("Numero: ");
             numero = leitor.nextLine().trim();
-            erro = clienteValid.validarCampo(numero, "Número");
+            erro = clienteValid.validarCampo(numero, "Número", 10);
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
+        cpf    = CpfUtil.limpar(cpf);
+        estado = CodRastreioGen.paraSigla(estado);
+        cep    = cep.replaceAll("\\D", "");
+        email  = email.toLowerCase();
+
         Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
-        clientes.add(new Cliente(name, cpf, email, endCliente));
+        Cliente novo = new Cliente(0,name, cpf, email, endCliente);
+        try {
+            clienteDao.inserir(novo);
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                System.out.println("Erro: já existe um cliente com esse CPF.");
+            } else {
+                System.out.println("Erro ao salvar no banco: " + e.getMessage());
+            }
+            return;
+        }
+        clientes.add(novo);
 
         System.out.println("Cliente cadastrado com sucesso!");
         System.out.println("===========================");

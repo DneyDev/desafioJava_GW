@@ -2,6 +2,7 @@ package src.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 public class Entrega {
     private String idRastreio;
@@ -28,10 +29,11 @@ public class Entrega {
         this.status = novoStatus;
         System.out.println("Status de entrega: " + idRastreio + " | Atualizado para: "+ status);
     }
-    public double calcularTotal(){
-        double total = 0;
-        for(Produto p : produtos){ 
-            total += p.getPrice();
+
+    public BigDecimal calcularTotal(){
+        BigDecimal total = BigDecimal.ZERO;
+        for(Produto p : produtos){
+            total = total.add(p.getPrice());
         }
         return total;
     }
@@ -42,7 +44,7 @@ public class Entrega {
         System.out.println("Destinatario: "+ cliente.getName());
         System.out.println("Itens: ");
         for(Produto p : produtos){
-            System.out.printf(" - " + p.getProdName()+ ": R$ %.2f%n", p.getPrice());
+            System.out.printf(" - %s: R$ %.2f%n", p.getProdName(), p.getPrice());
         }
         System.out.printf("Total da compra: R$ %.2f%n", calcularTotal());
         System.out.println("===========================");

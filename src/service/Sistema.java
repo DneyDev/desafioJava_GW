@@ -1,12 +1,14 @@
 package src.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.stream.Collectors;
 import src.controllers.ClienteController;
 import src.controllers.ProdutoController;
+import src.db.EntregaDao;
 import src.models.*;
 import src.utils.CodRastreioGen;
 import src.validation.EntregaValid;
@@ -15,6 +17,7 @@ public class Sistema {
 
     private ClienteController clienteController;
     private ProdutoController produtoController;
+    private final EntregaDao entregaDao = new EntregaDao();
     private List<Entrega> entregas = new ArrayList<>();
     private Scanner leitor;
 
@@ -74,11 +77,17 @@ public class Sistema {
             return;
         }
 
-        Set<String> existentes = entregas.stream()
-            .map(Entrega::getIdRastreio)
-            .collect(Collectors.toSet());
+        String uf = CodRastreioGen.paraSigla(clientes.get(indice).getEnd().getEstado());
 
-        String codigo = CodRastreioGen.gerar(clientes.get(indice).getEnd().getEstado(), existentes);
+        Set<String> existentes = new HashSet<>();
+        for (Entrega ent : entregas) existentes.add(ent.getIdRastreio());
+        try {
+            existentes.addAll(entregaDao.codigosPorUf(uf));
+        } catch (SQLException ex) {
+            System.out.println("Erro ao consultar o banco: " + ex.getMessage());
+            return;
+        }
+        String codigo = CodRastreioGen.gerar(uf, existentes);
         Entrega novaEntrega = new Entrega(codigo, clientes.get(indice));
 
         do {

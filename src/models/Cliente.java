@@ -2,12 +2,14 @@ package src.models;
 
 public class Cliente {
 
+    private int id;
     private String name;
     private String cpf;
     private String email;
     private Endereco endereco;
 
-    public Cliente(String name, String cpf, String email, Endereco endereco){
+    public Cliente(int id, String name, String cpf, String email, Endereco endereco){
+        this.id = id;
         this.name = name;
         this.cpf = cpf;
         this.email = email;
@@ -23,11 +25,13 @@ public class Cliente {
         System.out.println("Endereco: "+ endereco.getEndCompleto());
     }
     
+    public int getId(){ return id; }
     public String getName(){ return name; }
     public String getCpf(){ return cpf; }
     public String getEmail(){ return email; }
     public Endereco getEnd(){ return endereco;}
 
+    public void setId(int id){ this.id = id; }
     public void setName(String name){ this.name = name; }
     public void setCpf(String cpf){ this.cpf = cpf; }
     public void setEmail(String email){ this.email = email; }

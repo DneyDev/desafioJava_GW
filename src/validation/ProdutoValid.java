@@ -3,19 +3,28 @@ package src.validation;
 import src.models.Produto;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 public class ProdutoValid implements Valid<Produto> {
 
+    private static final BigDecimal PRECO_MAXIMO = new BigDecimal("99999999.99");
+
     public String validarNome(String nome) {
-        return (nome == null || nome.isBlank()) ? "Nome é obrigatório!" : null;
+        if (nome == null || nome.isBlank()) return "Nome é obrigatório!";
+        if (nome.length() > 255) return "Nome deve ter no máximo 255 caracteres!";
+        return null;
     }
 
     public String validarDescricao(String desc) {
         return (desc == null || desc.isBlank()) ? "Descrição é obrigatória!" : null;
     }
 
-    public String validarPreco(double preco) {
-        return preco <= 0 ? "O preço deve ser maior que zero!" : null;
+    public String validarPreco(BigDecimal preco) {
+        if (preco == null) return "Preço inválido! Digite um número (ex: 19,90).";
+        if (preco.compareTo(BigDecimal.ZERO) <= 0) return "O preço deve ser maior que zero!";
+        if (preco.scale() > 2) return "O preço deve ter no máximo 2 casas decimais!";
+        if (preco.compareTo(PRECO_MAXIMO) > 0) return "O preço máximo é R$ 99.999.999,99!";
+        return null;
     }
 
     @Override

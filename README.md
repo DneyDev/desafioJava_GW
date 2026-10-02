@@ -1,6 +1,6 @@
-# Sistema GW POO
+# Transportadora GW
 
-Projeto Java desenvolvido para praticar programação orientada a objetos com foco em cadastro de clientes, registro de produtos e gerenciamento de entregas por terminal.
+Projeto Java desenvolvido para praticar programação orientada a objetos e modelagem de Banco de Dados com foco em cadastro de clientes, registro de produtos e gerenciamento de entregas.
 
 ## Funcionalidades
 
@@ -10,6 +10,7 @@ Projeto Java desenvolvido para praticar programação orientada a objetos com fo
 - Exibição do resumo da entrega com rastreio, endereço, destinatário e total.
 - Validação básica de dados de entrada, feitos em cada etapa.
 - Menu interativo via terminal para repetir operações até o usuário encerrar o programa.
+- Banco de dados via Postgres para modelagem
 
 ## Estrutura do projeto
 
@@ -20,6 +21,11 @@ src/
 ├── controllers/
 │   ├── ClienteController.java     # Cadastro de Clientes
 │   └── ProdutoController.java     # Cadastro de Produtos
+└── db/
+│   ├── ClienteDAO.java            # preparando para próxima fase*
+│   ├── ConnectionService.java
+│   ├── EntregaDAO.java            # *
+│   ├── Schema.sql
 ├── models/
 │   ├── Cliente.java               # Modelo do cliente
 │   ├── Endereco.java              # Modelo do endereço
@@ -36,7 +42,7 @@ src/
 │   ├── ProdutoValid.java          # Validação de produto
 │   └── Valid.java                 # Interface genérica de validação
 └── db/
-    └── (estrutura para persistência local, se necessário)
+    └── 
 ```
 
 ## Como executar

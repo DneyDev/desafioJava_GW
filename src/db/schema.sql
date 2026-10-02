@@ -25,7 +25,9 @@ CREATE TABLE produtos (
 CREATE TABLE entregas (
     id              SERIAL PRIMARY KEY,
     cliente_id      INT      NOT NULL
-                    REFERENCES clientes(id) ON DELETE RESTRICT,
+                    REFERENCES clientes(id) ON DELETE CASCADE,
+    endereco_id     INT NOT NULL
+                    REFERENCES enderecos(id) ON DELETE CASCADE,
     codigo_rastreio CHAR(8)  NOT NULL UNIQUE,
     status          VARCHAR(20) NOT NULL DEFAULT 'Pendente'
 );
@@ -33,7 +35,7 @@ CREATE TABLE itens_entrega (
     entrega_id     INT NOT NULL
                    REFERENCES entregas(id) ON DELETE CASCADE, -- *
     produto_id     INT NOT NULL
-                   REFERENCES produtos(id) ON DELETE RESTRICT,
+                   REFERENCES produtos(id) ON DELETE RESTRICT, -- Para não deletar o Produto
     quantidade     INT NOT NULL DEFAULT 1 CHECK (quantidade > 0),
     preco_unitario NUMERIC(10,2) NOT NULL CHECK (preco_unitario > 0),
     PRIMARY KEY (entrega_id, produto_id)

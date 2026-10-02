@@ -99,8 +99,13 @@ public class Sistema {
             if (indiceProd < 0 || indiceProd >= produtos.size()) {
                 System.out.println("Produto inválido!");
             } else {
-                novaEntrega.addProd(produtos.get(indiceProd));
-                System.out.println("Produto adicionado.");
+                int quantidade = lerInt("Quantidade: ");
+                if (quantidade <= 0) {
+                    System.out.println("A quantidade deve ser maior que zero!");
+                } else {
+                    novaEntrega.addProd(produtos.get(indiceProd), quantidade);
+                    System.out.println("Produto adicionado.");
+                }
             }
         } while (lerSN("Adicionar outro produto a esta entrega?"));
 

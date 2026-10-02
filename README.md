@@ -25,6 +25,7 @@ src/
 │   ├── ClienteDAO.java            # preparando para próxima fase*
 │   ├── ConnectionService.java
 │   ├── EntregaDAO.java            # *
+│   ├── ProdutoDAO.java            # *
 │   ├── Schema.sql
 ├── models/
 │   ├── Cliente.java               # Modelo do cliente

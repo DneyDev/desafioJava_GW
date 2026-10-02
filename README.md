@@ -43,6 +43,51 @@ src/
     └── Valid.java                 # Interface genérica de validação
 ```
 
+## Diagrama do banco de dados
+
+```mermaid
+erDiagram
+    CLIENTES ||--|| ENDERECOS : possui
+    CLIENTES ||--o{ ENTREGAS : recebe
+    ENTREGAS ||--o{ ITENS_ENTREGA : contem
+    PRODUTOS ||--o{ ITENS_ENTREGA : inclui
+
+    CLIENTES {
+        int id PK
+        varchar nome
+        char cpf UK
+        varchar email UK
+    }
+    ENDERECOS {
+        int id PK
+        int cliente_id FK, UK
+        varchar rua
+        varchar numero
+        varchar cidade
+        char estado
+        char cep
+    }
+    PRODUTOS {
+        int id PK
+        varchar nome
+        text descricao
+        numeric preco
+        numeric peso
+    }
+    ENTREGAS {
+        int id PK
+        int cliente_id FK
+        char codigo_rastreio UK
+        varchar status
+    }
+    ITENS_ENTREGA {
+        int entrega_id PK, FK
+        int produto_id PK, FK
+        int quantidade
+        numeric preco_unitario
+    }
+```
+
 ## Como executar
 
 Na raiz do projeto, compile todos os arquivos Java:

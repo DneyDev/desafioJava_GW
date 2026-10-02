@@ -3,6 +3,8 @@ package src.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.sql.SQLException;
+import src.db.ProdutoDao;
 import src.models.Produto;
 import src.validation.ProdutoValid;
 import java.math.BigDecimal;
@@ -10,10 +12,20 @@ import java.math.BigDecimal;
 public class ProdutoController {
 
     private List<Produto> produtos = new ArrayList<>();
+    private final ProdutoDao produtoDao = new ProdutoDao();
     private Scanner leitor;
 
     public ProdutoController(Scanner leitor) {
         this.leitor = leitor;
+        carregarProdutos();
+    }
+
+    private void carregarProdutos() {
+        try {
+            produtos = produtoDao.listar();
+        } catch (SQLException e) {
+            System.out.println("Erro ao carregar produtos do banco: " + e.getMessage());
+        }
     }
 
     public void registrar() {
@@ -36,7 +48,7 @@ public class ProdutoController {
                 // fica null; o ProdutoValid rejeita
             }
 
-            novoProduto = new Produto(produtos.size() + 1, prodName, descricao, price);
+            novoProduto = new Produto(0, prodName, descricao, price);
             erros = produtoValid.validar(novoProduto);
             if (!erros.isEmpty()) {
                 System.out.println("Dados inválidos, preencha novamente:");
@@ -44,6 +56,12 @@ public class ProdutoController {
             }
         } while (!erros.isEmpty());
 
+        try {
+            produtoDao.inserir(novoProduto);
+        } catch (SQLException ex) {
+            System.out.println("Erro ao salvar o produto no banco: " + ex.getMessage());
+            return;
+        }
         produtos.add(novoProduto);
         System.out.println("Produto registrado com sucesso!");
     }

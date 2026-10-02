@@ -51,6 +51,7 @@ public class ClienteController {
             if (erro == null && cpfJaCadastrado(CpfUtil.limpar(cpf))) {
                 erro = "Já existe um cliente com esse CPF!";
             }
+            if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
         String email;

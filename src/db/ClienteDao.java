@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import src.models.Cliente;
 import src.models.Endereco;
 
@@ -18,6 +20,27 @@ public class ClienteDao {
                 return rs.next();
             }
         }
+    }
+
+    public List<Cliente> listar() throws SQLException {
+        String sql = "SELECT c.id, c.nome, c.cpf, c.email, "
+                   + "e.rua, e.numero, e.cidade, e.estado, e.cep "
+                   + "FROM clientes c JOIN enderecos e ON e.cliente_id = c.id "
+                   + "ORDER BY c.id";
+        List<Cliente> lista = new ArrayList<>();
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Endereco end = new Endereco(
+                    rs.getString("estado"), rs.getString("cidade"), rs.getString("cep"),
+                    rs.getString("rua"), rs.getString("numero"));
+                lista.add(new Cliente(
+                    rs.getInt("id"), rs.getString("nome"),
+                    rs.getString("cpf"), rs.getString("email"), end));
+            }
+        }
+        return lista;
     }
 
     public void inserir(Cliente c) throws SQLException {

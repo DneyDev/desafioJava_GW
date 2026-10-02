@@ -21,7 +21,7 @@ src/
 ├── controllers/
 │   ├── ClienteController.java     # Cadastro de Clientes
 │   └── ProdutoController.java     # Cadastro de Produtos
-└── db/
+├── db/
 │   ├── ClienteDAO.java            # preparando para próxima fase*
 │   ├── ConnectionService.java
 │   ├── EntregaDAO.java            # *
@@ -36,13 +36,11 @@ src/
 ├── utils/
 |   ├── CodRastreioGen.java        # Utilitário para geração de códigos de rastreio de encomendas
 │   └── cpfUtil.java               # Utilitário para CPF
-├── validation/
-│   ├── ClienteValid.java          # Validação de cliente
-│   ├── EntregaValid.java          # Validação de entrega
-│   ├── ProdutoValid.java          # Validação de produto
-│   └── Valid.java                 # Interface genérica de validação
-└── db/
-    └── 
+└── validation/
+    ├── ClienteValid.java          # Validação de cliente
+    ├── EntregaValid.java          # Validação de entrega
+    ├── ProdutoValid.java          # Validação de produto
+    └── Valid.java                 # Interface genérica de validação
 ```
 
 ## Como executar

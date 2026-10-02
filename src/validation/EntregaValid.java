@@ -9,10 +9,10 @@ public class EntregaValid implements Valid<Entrega>{
     public List<String>validar(Entrega entrega){
         List<String> erros = new ArrayList<>();
         if(entrega.getCliente() == null){
-            erros.add("Erro: CLiente não encontrado!");
+            erros.add("Erro: Cliente não encontrado!");
         }
-        if(entrega.getProdutos() == null || entrega.getProdutos().isEmpty()){
-            erros.add("Erro: Não há produto(s) cadastrado(s)");
+        if(entrega.getItens() == null || entrega.getItens().isEmpty()){
+            erros.add("Erro: A entrega precisa ter ao menos um item!");
         }
         return erros;
     }

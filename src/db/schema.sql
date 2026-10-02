@@ -2,7 +2,7 @@ CREATE TABLE clientes (
     id    SERIAL PRIMARY KEY,
     nome  VARCHAR(255) NOT NULL,
     cpf   CHAR(11)     NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL
+    email VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE enderecos (
@@ -27,8 +27,7 @@ CREATE TABLE entregas (
     cliente_id      INT      NOT NULL
                     REFERENCES clientes(id) ON DELETE RESTRICT,
     codigo_rastreio CHAR(8)  NOT NULL UNIQUE,
-    status          VARCHAR(20) NOT NULL DEFAULT 'Pendente',
-    --criada_em       TIMESTAMP   NOT NULL DEFAULT now()
+    status          VARCHAR(20) NOT NULL DEFAULT 'Pendente'
 );
 CREATE TABLE itens_entrega (
     entrega_id     INT NOT NULL

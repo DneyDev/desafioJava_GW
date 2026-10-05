@@ -19,15 +19,15 @@ CREATE TABLE produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descricao TEXT NOT NULL,
-    preco NUMERIC(10,2) NOT NULL CHECK (preco > 0),
-    peso NUMERIC(8,3)
+    preco NUMERIC(10,2) NOT NULL CHECK (preco > 0), -- check para não deixar a validação apenas no Java
+    peso NUMERIC(8,3) NOT NULL
 );
 CREATE TABLE entregas (
     id SERIAL PRIMARY KEY,
     cliente_id INT NOT NULL
-        REFERENCES clientes(id) ON DELETE CASCADE,
+        REFERENCES clientes(id) ON DELETE RESTRICT, --impede de apagar cliente pois terá uma entrega vinculada**
     endereco_id INT NOT NULL
-        REFERENCES enderecos(id) ON DELETE CASCADE,
+        REFERENCES enderecos(id) ON DELETE RESTRICT, --    **
     codigo_rastreio CHAR(8) NOT NULL UNIQUE,
     status VARCHAR(20) NOT NULL DEFAULT 'Pendente'
 );
@@ -35,7 +35,7 @@ CREATE TABLE itens_entrega (
     entrega_id INT NOT NULL
         REFERENCES entregas(id) ON DELETE CASCADE, -- *
     produto_id INT NOT NULL
-        REFERENCES produtos(id) ON DELETE RESTRICT, -- Para não deletar o Produto
+        REFERENCES produtos(id) ON DELETE RESTRICT, --impede apagar o produto pois é um registro da transportadora
     quantidade INT NOT NULL DEFAULT 1 CHECK (quantidade > 0),
     preco_unitario NUMERIC(10,2) NOT NULL CHECK (preco_unitario > 0),
     PRIMARY KEY (entrega_id, produto_id)

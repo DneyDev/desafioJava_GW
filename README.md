@@ -48,45 +48,52 @@ src/
 
 ```mermaid
 erDiagram
-    CLIENTES ||--|| ENDERECOS : possui
-    CLIENTES ||--o{ ENTREGAS : recebe
-    ENTREGAS ||--o{ ITENS_ENTREGA : contem
-    PRODUTOS ||--o{ ITENS_ENTREGA : inclui
 
     CLIENTES {
-        int id PK
-        varchar nome
-        char cpf UK
-        varchar email UK
+        SERIAL id PK
+        VARCHAR_255 nome
+        CHAR_11 cpf UK
+        VARCHAR_255 email UK
     }
+
     ENDERECOS {
-        int id PK
-        int cliente_id FK, UK
-        varchar rua
-        varchar numero
-        varchar cidade
-        char estado
-        char cep
+        SERIAL id PK
+        INT cliente_id FK
+        VARCHAR_255 rua
+        VARCHAR_10 numero
+        VARCHAR_100 cidade
+        CHAR_2 estado
+        CHAR_8 cep
     }
+
     PRODUTOS {
-        int id PK
-        varchar nome
-        text descricao
-        numeric preco
-        numeric peso
+        SERIAL id PK
+        VARCHAR_255 nome
+        TEXT descricao
+        NUMERIC_10_2 preco
+        NUMERIC_8_3 peso
     }
+
     ENTREGAS {
-        int id PK
-        int cliente_id FK
-        char codigo_rastreio UK
-        varchar status
+        SERIAL id PK
+        INT cliente_id FK
+        INT endereco_id FK
+        CHAR_8 codigo_rastreio UK
+        VARCHAR_20 status
     }
+
     ITENS_ENTREGA {
-        int entrega_id PK, FK
-        int produto_id PK, FK
-        int quantidade
-        numeric preco_unitario
+        INT entrega_id PK, FK
+        INT produto_id PK, FK
+        INT quantidade
+        NUMERIC_10_2 preco_unitario
     }
+
+    CLIENTES ||--o| ENDERECOS : "possui"
+    CLIENTES ||--o{ ENTREGAS : "realiza"
+    ENDERECOS ||--o{ ENTREGAS : "destino"
+    ENTREGAS ||--o{ ITENS_ENTREGA : "contem"
+    PRODUTOS ||--o{ ITENS_ENTREGA : "compõe"
 ```
 
 ## Como executar

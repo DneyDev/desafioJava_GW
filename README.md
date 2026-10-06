@@ -26,7 +26,7 @@ src/
 │   ├── ConnectionService.java
 │   ├── EntregaDAO.java            # *
 │   ├── ProdutoDAO.java            # *
-│   ├── Schema.sql
+│   ├── Schema.sql                 # Tabelas do Banco de Dados
 ├── models/
 │   ├── Cliente.java               # Modelo do cliente
 │   ├── Endereco.java              # Modelo do endereço

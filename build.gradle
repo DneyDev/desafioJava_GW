@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
+    providedCompile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.3'
+    implementation 'org.postgresql:postgresql:42.7.12'
+}
+
+application {
+    mainClass = 'app.Main'
+}

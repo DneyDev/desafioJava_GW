@@ -1,6 +1,6 @@
-package src.validation;
+package validation;
 
-import src.models.Entrega;
+import models.Entrega;
 import java.util.ArrayList;
 import java.util.List;
 

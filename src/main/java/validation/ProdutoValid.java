@@ -1,6 +1,6 @@
-package src.validation;
+package validation;
 
-import src.models.Produto;
+import models.Produto;
 import java.util.ArrayList;
 import java.util.List;
 import java.math.BigDecimal;

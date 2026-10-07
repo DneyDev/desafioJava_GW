@@ -1,12 +1,12 @@
-package src.controllers;
+package controllers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.sql.SQLException;
-import src.db.ProdutoDao;
-import src.models.Produto;
-import src.validation.ProdutoValid;
+import db.ProdutoDao;
+import models.Produto;
+import validation.ProdutoValid;
 import java.math.BigDecimal;
 
 public class ProdutoController {

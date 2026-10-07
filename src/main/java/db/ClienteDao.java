@@ -1,4 +1,4 @@
-package src.db;
+package db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import src.models.Cliente;
-import src.models.Endereco;
+import models.Cliente;
+import models.Endereco;
 
 public class ClienteDao {
 

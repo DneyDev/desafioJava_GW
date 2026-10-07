@@ -1,8 +1,8 @@
-package src.validation;
+package validation;
 
-import src.models.Cliente;
-import src.utils.*;
-import src.models.Endereco;
+import models.Cliente;
+import utils.*;
+import models.Endereco;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;

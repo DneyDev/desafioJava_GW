@@ -1,7 +1,7 @@
-package src.app;
+package app;
 
 import java.util.Scanner;
-import src.service.Sistema;
+import service.Sistema;
 
 public class Main {
 

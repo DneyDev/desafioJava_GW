@@ -1,4 +1,4 @@
-package src.validation;
+package validation;
 
 import java.util.List;
 

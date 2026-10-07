@@ -1,15 +1,15 @@
-package src.controllers;
+package controllers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import src.models.Cliente;
-import src.models.Endereco;
-import src.utils.CodRastreioGen;
-import src.utils.CpfUtil;
-import src.validation.ClienteValid;
+import models.Cliente;
+import models.Endereco;
+import utils.CodRastreioGen;
+import utils.CpfUtil;
+import validation.ClienteValid;
 import java.sql.SQLException;
-import src.db.ClienteDao;
+import db.ClienteDao;
 
 public class ClienteController {
 

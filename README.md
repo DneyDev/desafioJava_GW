@@ -15,7 +15,7 @@ Projeto Java desenvolvido para praticar programação orientada a objetos e mode
 ## Estrutura do projeto
 
 ```text
-src/
+src/main/java/
 ├── app/
 │   └── Main.java                 # Ponto de entrada da aplicação e menu principal
 ├── controllers/
@@ -101,16 +101,16 @@ erDiagram
 Na raiz do projeto, compile todos os arquivos Java:
 
 ```bash
-find src -name '*.java' -print0 | xargs -0 javac -d out
+find src/main/java -name '*.java' -print0 | xargs -0 javac -cp 'lib/*' -d out
 ```
 
 Depois, execute a aplicação:
 
 ```bash
-java -cp out src.app.Main
+java -cp 'out:lib/*' app.Main
 ```
 
-Também é possível abrir o projeto em uma IDE Java e executar a classe `src.app.Main`.
+Também é possível abrir o projeto em uma IDE Java e executar a classe `app.Main`.
 
 ## Como usar
 

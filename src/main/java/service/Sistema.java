@@ -1,4 +1,4 @@
-package src.service;
+package service;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import src.controllers.ClienteController;
-import src.controllers.ProdutoController;
-import src.db.EntregaDao;
-import src.models.*;
-import src.utils.CodRastreioGen;
-import src.validation.EntregaValid;
+import controllers.ClienteController;
+import controllers.ProdutoController;
+import db.EntregaDao;
+import models.*;
+import utils.CodRastreioGen;
+import validation.EntregaValid;
 
 public class Sistema {
 

@@ -13,8 +13,8 @@ public class ClienteDao {
 
     public boolean existePorCpf(String cpf) throws SQLException {
         String sql = "SELECT 1 FROM clientes WHERE cpf = ?";
-        try (Connection con = ConnectionService.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConnectionService.getConnection(); //con é alias de Connection
+             PreparedStatement ps = con.prepareStatement(sql)) { //ps é o alias de PreparedStatement
             ps.setString(1, cpf);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();

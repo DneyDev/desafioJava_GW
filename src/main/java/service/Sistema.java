@@ -114,7 +114,12 @@ public class Sistema {
             erros.forEach(e -> System.out.println("- " + e));
             return;
         }
-
+        try{
+            entregaDao.salvar(novaEntrega);
+        }catch(SQLException ex){
+            System.out.println("Erro ao salvar entrega no banco: " + ex.getMessage());
+            return; //retorna o erro
+        }
         entregas.add(novaEntrega);
         System.out.println("Entrega registrada com sucesso!");
         novaEntrega.exibirResumo();

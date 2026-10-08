@@ -47,8 +47,16 @@ public class ProdutoController {
             } catch (NumberFormatException e) {
                 // fica null; o ProdutoValid rejeita
             }
+            
+            System.out.println("Peso(Kg): ");
+            BigDecimal peso = null;
+            try{
+                peso = new BigDecimal(leitor.nextLine().trim().replace(",", "."));
+            }catch(NumberFormatException e){
+                //fica null pois o Produto Valid rejeita
+            }
 
-            novoProduto = new Produto(0, prodName, descricao, price);
+            novoProduto = new Produto(0, prodName, descricao, price, peso);
             erros = produtoValid.validar(novoProduto);
             if (!erros.isEmpty()) {
                 System.out.println("Dados inválidos, preencha novamente:");

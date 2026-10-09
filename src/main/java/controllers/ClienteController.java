@@ -18,9 +18,17 @@ public class ClienteController {
 
     public ClienteController(Scanner leitor) {
         this.leitor = leitor;
+        carregarClientes();
     }
     private final ClienteDao clienteDao = new ClienteDao();
 
+    private void carregarClientes(){
+        try{
+            clientes = clienteDao.listar();
+        } catch(SQLException e){
+            System.out.println("Erro ao carregar clientes do banco");
+        }
+    }
     private boolean cpfJaCadastrado(String cpfLimpo) {
         try {
             return clienteDao.existePorCpf(cpfLimpo);

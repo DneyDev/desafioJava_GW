@@ -1,5 +1,7 @@
 package db;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 import models.Entrega;
 import models.ItemEntrega;
+import models.Cliente;
+import models.Endereco;
 
 public class EntregaDao {
 
@@ -63,5 +67,36 @@ public class EntregaDao {
                 throw ex;
             }
         }
+    }
+    public List<Entrega> listarTodas() throws SQLException{
+        String sql = "SELECT en.id AS entrega_id, en.codigo_rastreio, en.status, "
+           + "c.id AS cliente_id, c.nome, c.cpf, c.email, "
+           + "e.rua, e.numero, e.cidade, e.estado, e.cep "
+           + "FROM entregas en "
+           + "JOIN clientes c ON c.id = en.cliente_id "
+           + "JOIN enderecos e ON e.id = en.endereco_id "
+           + "ORDER BY en.id";
+        List<Entrega> lista = new ArrayList<>();
+        try(Connection con = ConnectionService.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            while(rs.next()){
+                Endereco endereco = new Endereco(
+                    rs.getString("estado"), rs.getString("cidade"), rs.getString("cep"),
+                    rs.getString("rua"), rs.getString("numero")
+                );
+                Cliente cliente = new Cliente(
+                    rs.getInt("cliente_id"), rs.getString("nome"), 
+                    rs.getString("cpf"), rs.getString("email"), endereco
+                );
+                Entrega entrega = new Entrega(
+                    rs.getInt("entrega_id"),
+                    rs.getString("codigo_rastreio"),
+                    cliente
+                );
+                lista.add(entrega);
+            }
+        }
+        return lista;
     }
 }

@@ -27,12 +27,23 @@ public class ProdutoValid implements Valid<Produto> {
         return null;
     }
 
+    private static final BigDecimal PESO_MAXIMO = new BigDecimal("99999.999");
+
+    public String validarPeso(BigDecimal peso) {
+        if (peso == null) return "Peso inválido! Digite um número em kg (ex: 2,5).";
+        if (peso.compareTo(BigDecimal.ZERO) <= 0) return "O peso deve ser maior que zero!";
+        if (peso.scale() > 3) return "O peso deve ter no máximo 3 casas decimais!";
+        if (peso.compareTo(PESO_MAXIMO) > 0) return "O peso máximo é 99999,999 kg!";
+        return null;
+    }
+
     @Override
-    public List<String> validar(Produto produto) {
+    public List<String> validar(Produto produto) { //todas as validações de Produto inicializam aqui
         List<String> erros = new ArrayList<>();
         addSeErro(erros, validarNome(produto.getProdName()));
         addSeErro(erros, validarDescricao(produto.getDesc()));
         addSeErro(erros, validarPreco(produto.getPrice()));
+        addSeErro(erros, validarPeso(produto.getPeso())); 
         return erros;
     }
 

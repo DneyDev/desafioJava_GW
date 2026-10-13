@@ -17,8 +17,21 @@ public class ItemEntrega {
         this.precoUnitario = produto.getPrice();
     }
 
+    public ItemEntrega(Produto produto, int quantidade, BigDecimal precoUnitario) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero!");
+        }
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.precoUnitario = precoUnitario;
+    }
+
     public void somarQuantidade(int extra) {
-        this.quantidade += extra;
+        try {
+            this.quantidade = Math.addExact(this.quantidade, extra);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("A quantidade total desse produto excede o limite permitido!");
+        }
     }
 
     public BigDecimal getSubtotal() {

@@ -13,9 +13,20 @@ public class ClienteDao {
 
     public boolean existePorCpf(String cpf) throws SQLException {
         String sql = "SELECT 1 FROM clientes WHERE cpf = ?";
+        try (Connection con = ConnectionService.getConnection(); //con é alias de Connection
+             PreparedStatement ps = con.prepareStatement(sql)) { //ps é o alias de PreparedStatement
+            ps.setString(1, cpf);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean existePorEmail(String email) throws SQLException {
+        String sql = "SELECT 1 FROM clientes WHERE email = ?";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, cpf);
+            ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }

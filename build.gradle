@@ -17,3 +17,7 @@ dependencies {
 application {
     mainClass = 'app.Main'
 }
+
+run {
+    standardInput = System.in
+}

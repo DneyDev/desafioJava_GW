@@ -28,4 +28,8 @@ public class Sistema {
     public void novaEntrega(){
         entregaController.novaEntrega();
     }
+
+    public void atualizarStatus(){
+        entregaController.atualizarStatus();
+    }
 }

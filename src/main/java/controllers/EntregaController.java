@@ -23,8 +23,17 @@ public class EntregaController {
         this.leitor = leitor;
         this.clienteController = clienteController;
         this.produtoController = produtoController;
+        carregarEntregas();
     }
     private final EntregaDao entregaDao = new EntregaDao();
+
+    private void carregarEntregas() {
+        try {
+            entregas = entregaDao.listarTodas();
+        } catch (SQLException e) {
+            System.out.println("Erro ao carregar entregas do banco: " + e.getMessage());
+        }
+    }
 
     private int lerInt(String msg) {
         while (true) {
@@ -94,8 +103,12 @@ public class EntregaController {
                 if (quantidade <= 0) {
                     System.out.println("A quantidade deve ser maior que zero!");
                 } else {
-                    novaEntrega.addProd(produtos.get(indiceProd), quantidade);
-                    System.out.println("Produto adicionado.");
+                    try {
+                        novaEntrega.addProd(produtos.get(indiceProd), quantidade);
+                        System.out.println("Produto adicionado.");
+                    } catch (IllegalArgumentException ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 }
             }
         } while (lerSN("Adicionar outro produto a esta entrega?"));
@@ -114,5 +127,52 @@ public class EntregaController {
         entregas.add(novaEntrega);
         System.out.println("Entrega registrada com sucesso!");
         novaEntrega.exibirResumo();
+    }
+
+    public void atualizarStatus() {
+        System.out.println("===== Atualizar Status da Entrega =====");
+
+        if (entregas.isEmpty()) {
+            System.out.println("Nenhuma entrega registrada.");
+            return;
+        }
+
+        System.out.println("Entregas: ");
+        for (int i = 0; i < entregas.size(); i++) {
+            System.out.println(i + " - " + entregas.get(i).getIdRastreio() + " | " + entregas.get(i).getStatus());
+        }
+        int indice = lerInt("Selecione a Entrega: ");
+        if (indice < 0 || indice >= entregas.size()) {
+            System.out.println("Entrega inválida!");
+            return;
+        }
+
+        Entrega entrega = entregas.get(indice);
+        EntregaValid entregaValid = new EntregaValid();
+        String erro = entregaValid.validarStatusAtual(entrega.getStatus());
+        if (erro != null) {
+            System.out.println("Erro: " + erro);
+            return;
+        }
+
+        String novoStatus;
+        do {
+            System.out.println("Novo status (" + String.join(", ", EntregaValid.STATUS_VALIDOS) + "): ");
+            novoStatus = leitor.nextLine().trim();
+            erro = entregaValid.validarAtualizacaoStatus(entrega.getStatus(), novoStatus);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
+        novoStatus = EntregaValid.statusPadrao(novoStatus);
+        try {
+            if (!entregaDao.atualizarStatus(entrega.getIdRastreio(), novoStatus)) {
+                System.out.println("Erro: entrega não encontrada no banco.");
+                return;
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao atualizar o status no banco: " + ex.getMessage());
+            return;
+        }
+        entrega.updStatus(novoStatus);
     }
 }

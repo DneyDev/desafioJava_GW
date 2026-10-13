@@ -39,7 +39,8 @@ public class Main {
             System.out.println("1- Cadastrar Cliente.");
             System.out.println("2- Registrar Produto.");
             System.out.println("3- Nova Entrega.");
-            System.out.println("4- Sair.");
+            System.out.println("4- Atualizar Status.");
+            System.out.println("5- Sair.");
             System.out.println("====================");
 
             opcao = lerOpcao();
@@ -58,12 +59,16 @@ public class Main {
                     while (perguntarSN("Deseja registrar outra entrega?"));
                     break;
                 case 4:
+                    do { sistema.atualizarStatus(); }
+                    while (perguntarSN("Deseja atualizar outro status?"));
+                    break;
+                case 5:
                     System.out.println("Encerrando o sistema. Até logo!");
                     break;
                 default:
                     System.out.println("Opção inválida, tente novamente!");
             }
-        } while (opcao != 4);
+        } while (opcao != 5);
 
         leitor.close();
     }

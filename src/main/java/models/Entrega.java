@@ -5,12 +5,21 @@ import java.util.List;
 import java.math.BigDecimal;
 
 public class Entrega {
+    private int id;
     private String idRastreio;
     private Cliente cliente;
     private List<ItemEntrega> itens;
     private String status;
     
     public Entrega(String idRastreio, Cliente cliente){
+        this.idRastreio = idRastreio;
+        this.cliente = cliente;
+        this.itens = new ArrayList<>();
+        this.status = "Pendente";
+    }
+
+    public Entrega(int id, String idRastreio, Cliente cliente){
+        this.id = id;
         this.idRastreio = idRastreio;
         this.cliente = cliente;
         this.itens = new ArrayList<>();
@@ -57,11 +66,13 @@ public class Entrega {
         System.out.println("===========================");
     }
     
+    public int getId(){ return id; }
     public String getIdRastreio(){ return idRastreio; }
     public Cliente getCliente(){ return cliente; }
     public List<ItemEntrega> getItens(){ return itens; }
     
     public void setIdRastreio(String idRastreio){ this.idRastreio = idRastreio; }
     public void setCliente(Cliente cliente){ this.cliente = cliente; }
+    public void setStatus(String status){ this.status = status; }
     public String getStatus(){ return status; }
 }

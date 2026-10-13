@@ -6,12 +6,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import models.Entrega;
 import models.ItemEntrega;
 import models.Cliente;
 import models.Endereco;
+import models.Produto;
 
 public class EntregaDao {
 
@@ -68,6 +71,15 @@ public class EntregaDao {
             }
         }
     }
+    public boolean atualizarStatus(String codigoRastreio, String novoStatus) throws SQLException {
+        String sql = "UPDATE entregas SET status = ? WHERE codigo_rastreio = ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, novoStatus);
+            ps.setString(2, codigoRastreio);
+            return ps.executeUpdate() > 0; //false se nenhuma entrega tem esse código
+        }
+    }
     public List<Entrega> listarTodas() throws SQLException{
         String sql = "SELECT en.id AS entrega_id, en.codigo_rastreio, en.status, "
            + "c.id AS cliente_id, c.nome, c.cpf, c.email, "
@@ -76,7 +88,13 @@ public class EntregaDao {
            + "JOIN clientes c ON c.id = en.cliente_id "
            + "JOIN enderecos e ON e.id = en.endereco_id "
            + "ORDER BY en.id";
+        String sqlItens = "SELECT ie.entrega_id, ie.quantidade, ie.preco_unitario, "
+           + "p.id, p.nome, p.descricao, p.preco, p.peso "
+           + "FROM itens_entrega ie "
+           + "JOIN produtos p ON p.id = ie.produto_id "
+           + "ORDER BY ie.entrega_id";
         List<Entrega> lista = new ArrayList<>();
+        Map<Integer, Entrega> porId = new HashMap<>();
         try(Connection con = ConnectionService.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()) {
@@ -94,7 +112,26 @@ public class EntregaDao {
                     rs.getString("codigo_rastreio"),
                     cliente
                 );
+                entrega.setStatus(rs.getString("status"));
                 lista.add(entrega);
+                porId.put(entrega.getId(), entrega);
+            }
+
+            try (PreparedStatement psItens = con.prepareStatement(sqlItens);
+                 ResultSet rsItens = psItens.executeQuery()) {
+                while (rsItens.next()) {
+                    Entrega dona = porId.get(rsItens.getInt("entrega_id"));
+                    if (dona == null) continue;
+                    Produto produto = new Produto(
+                        rsItens.getInt("id"), rsItens.getString("nome"),
+                        rsItens.getString("descricao"), rsItens.getBigDecimal("preco"),
+                        rsItens.getBigDecimal("peso")
+                    );
+                    dona.getItens().add(new ItemEntrega(
+                        produto, rsItens.getInt("quantidade"),
+                        rsItens.getBigDecimal("preco_unitario")
+                    ));
+                }
             }
         }
         return lista;

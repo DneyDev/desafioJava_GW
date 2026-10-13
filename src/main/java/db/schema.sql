@@ -20,7 +20,7 @@ CREATE TABLE produtos (
     nome VARCHAR(255) NOT NULL,
     descricao TEXT NOT NULL,
     preco NUMERIC(10,2) NOT NULL CHECK (preco > 0), -- check para não deixar a validação apenas no Java
-    peso NUMERIC(8,3) NOT NULL
+    peso NUMERIC(8,3) NOT NULL CHECK (peso > 0)
 );
 CREATE TABLE entregas (
     id SERIAL PRIMARY KEY,
@@ -30,6 +30,7 @@ CREATE TABLE entregas (
         REFERENCES enderecos(id) ON DELETE RESTRICT, --    **
     codigo_rastreio CHAR(8) NOT NULL UNIQUE,
     status VARCHAR(20) NOT NULL DEFAULT 'Pendente'
+        CHECK (status IN ('Pendente', 'Em transito', 'Entregue', 'Cancelada'))
 );
 CREATE TABLE itens_entrega (
     entrega_id INT NOT NULL

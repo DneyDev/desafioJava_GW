@@ -8,6 +8,7 @@ Projeto Java desenvolvido para praticar programação orientada a objetos e mode
 - Registro de produtos com nome, descrição e preço.
 - Criação de entregas vinculando um cliente a um ou mais produtos.
 - Exibição do resumo da entrega com rastreio, endereço, destinatário e total.
+- Atualização do status da entrega (Pendente, Em transito, Entregue ou Cancelada) com validação.
 - Validação básica de dados de entrada, feitos em cada etapa.
 - Menu interativo via terminal para repetir operações até o usuário encerrar o programa.
 - Banco de dados via Postgres para modelagem
@@ -120,7 +121,8 @@ Ao iniciar o programa, o menu principal oferece as opções:
 1 - Cadastrar Cliente
 2 - Registrar Produto
 3 - Nova Entrega
-4 - Sair
+4 - Atualizar Status
+5 - Sair
 ```
 
 Fluxo típico:
@@ -129,7 +131,8 @@ Fluxo típico:
 2. Cadastre pelo menos um produto.
 3. Selecione o cliente e o produto para registrar a entrega.
 4. O sistema mostra o resumo da entrega com o total calculado.
-5. O menu volta para nova operação ou encerra ao escolher `4`.
+5. Para mudar o status de uma entrega (Pendente, Em transito, Entregue ou Cancelada), escolha `4`.
+6. O menu volta para nova operação ou encerra ao escolher `5`.
 
 ## Observações importantes
 

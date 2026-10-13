@@ -31,5 +31,5 @@ public class Produto {
     public void setProdName(String prodName){ this.prodName = prodName; }
     public void setPrice(BigDecimal price){ this.price = price; }
     public void setDesc(String descricao){ this.descricao = descricao; }
-    public void getPeso(BigDecimal peso){ this.peso = peso; }
+    public void setPeso(BigDecimal peso){ this.peso = peso; }
 }

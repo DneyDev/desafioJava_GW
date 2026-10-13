@@ -37,6 +37,14 @@ public class ClienteController {
             return false;
         }
     }
+    private boolean emailJaCadastrado(String emailMinusculo) {
+        try {
+            return clienteDao.existePorEmail(emailMinusculo);
+        } catch (SQLException e) {
+            System.out.println("Erro ao consultar o banco: " + e.getMessage());
+            return false;
+        }
+    }
     public void cadastrar() {
         ClienteValid clienteValid = new ClienteValid();
         String erro;
@@ -67,6 +75,9 @@ public class ClienteController {
             System.out.println("Email: ");
             email = leitor.nextLine().trim();
             erro = clienteValid.validarEmail(email);
+            if (erro == null && emailJaCadastrado(email.toLowerCase())) {
+                erro = "Já existe um cliente com esse email!";
+            }
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
@@ -129,7 +140,7 @@ public class ClienteController {
             clienteDao.inserir(novo);
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                System.out.println("Erro: já existe um cliente com esse CPF.");
+                System.out.println("Erro: já existe um cliente com esse CPF ou email.");
             } else {
                 System.out.println("Erro ao salvar no banco: " + e.getMessage());
             }

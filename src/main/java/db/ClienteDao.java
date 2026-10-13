@@ -22,6 +22,17 @@ public class ClienteDao {
         }
     }
 
+    public boolean existePorEmail(String email) throws SQLException {
+        String sql = "SELECT 1 FROM clientes WHERE email = ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     public List<Cliente> listar() throws SQLException {
         String sql = "SELECT c.id, c.nome, c.cpf, c.email, "
                    + "e.rua, e.numero, e.cidade, e.estado, e.cep "

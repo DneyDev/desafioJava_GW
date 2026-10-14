@@ -1,0 +1,62 @@
+:root {
+    --sidebar-bg: #111827;
+    --sidebar-text: #9ca3af;
+    --sidebar-active-bg: #1f2937;
+    --sidebar-active-text: #10b981;
+    --primary-green: #10b981;
+    --primary-green-hover: #059669;
+    --bg-main: #f9fafb;
+    --card-bg: #ffffff;
+    --border-color: #e5e7eb;
+    --text-dark: #111827;
+    --text-muted: #6b7280;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+body { display: flex; height: 100vh; background-color: var(--bg-main); color: var(--text-dark); overflow: hidden; }
+
+/* Sidebar */
+.sidebar { width: 250px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; justify-content: space-between; padding: 25px 0; flex-shrink: 0; }
+.sidebar .logo { font-size: 20px; font-weight: 700; color: #ffffff; padding: 0 20px 25px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1f2937; margin-bottom: 15px; }
+.sidebar .menu { list-style: none; }
+.sidebar .menu li { margin-bottom: 4px; }
+.sidebar .menu li a { display: flex; align-items: center; padding: 12px 20px; color: var(--sidebar-text); text-decoration: none; font-size: 14px; font-weight: 500; border-left: 3px solid transparent; transition: 0.2s; gap: 10px; }
+.sidebar .menu li.active a, .sidebar .menu li a:hover { background-color: var(--sidebar-active-bg); color: var(--sidebar-active-text); border-left-color: var(--primary-green); }
+
+/* Main Content Area */
+.main-content { flex: 1; overflow-y: auto; padding: 30px 40px; }
+.top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.breadcrumbs { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+.page-title { font-size: 24px; font-weight: 700; color: var(--text-dark); }
+
+/* Buttons */
+.btn-green { background-color: var(--primary-green); color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+.btn-green:hover { background-color: var(--primary-green-hover); }
+
+/* Metrics Cards (Sem veículos / mapa) */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.metric-card { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
+.metric-card .label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+.metric-card .value { font-size: 26px; font-weight: 700; color: var(--text-dark); }
+
+/* Cards & Tables */
+.table-card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 24px; margin-bottom: 25px; }
+.table-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 15px; color: var(--text-dark); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 12px 14px; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border-color); }
+td { padding: 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+
+/* Status Badges */
+.badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; }
+.badge-pendente { background-color: #fef3c7; color: #d97706; }
+.badge-transito { background-color: #dbeafe; color: #2563eb; }
+.badge-entregue { background-color: #d1fae5; color: #059669; }
+.badge-cancelado { background-color: #fee2e2; color: #dc2626; }
+
+/* Forms */
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-dark); }
+.form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; background-color: #fff; outline: none; }
+.form-control:focus { border-color: var(--primary-green); }

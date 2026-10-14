@@ -6,10 +6,10 @@ import java.util.Scanner;
 import models.Cliente;
 import models.Endereco;
 import utils.CodRastreioGen;
-import utils.CpfUtil;
 import validation.ClienteValid;
 import java.sql.SQLException;
 import db.ClienteDao;
+import models.TipoCliente;
 
 public class ClienteController {
 
@@ -29,12 +29,21 @@ public class ClienteController {
             System.out.println("Erro ao carregar clientes do banco");
         }
     }
-    private boolean cpfJaCadastrado(String cpfLimpo) {
+    private boolean documentoJaCadastrado(String documentoLimpo) {
         try {
-            return clienteDao.existePorCpf(cpfLimpo);
+            return clienteDao.existePorDocumento(documentoLimpo);
         } catch (SQLException e) {
             System.out.println("Erro ao consultar o banco: " + e.getMessage());
             return false;
+        }
+    }
+    private TipoCliente lerTipo() {
+        while (true) {
+            System.out.println("Tipo de cliente (1 - Pessoa Física, 2 - Pessoa Jurídica): ");
+            String r = leitor.nextLine().trim();
+            if (r.equals("1")) return TipoCliente.PF;
+            if (r.equals("2")) return TipoCliente.PJ;
+            System.out.println("Erro: digite 1 ou 2!");
         }
     }
     private boolean emailJaCadastrado(String emailMinusculo) {
@@ -51,24 +60,27 @@ public class ClienteController {
 
         System.out.println("===== Menu de Cadastro =====");
 
+        TipoCliente tipo = lerTipo();
+
         String name;
         do {
-            System.out.println("Insira o nome do Cliente: ");
+            System.out.println(tipo.getRotuloNome() + " do Cliente: ");
             name = leitor.nextLine().trim();
-            erro = clienteValid.validarNome(name);
+            erro = clienteValid.validarNome(name, tipo);
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
-        String cpf;
+        String documento;
         do {
-            System.out.println("CPF: ");
-            cpf = leitor.nextLine().trim();
-            erro = clienteValid.validarCpf(cpf);
-            if (erro == null && cpfJaCadastrado(CpfUtil.limpar(cpf))) {
-                erro = "Já existe um cliente com esse CPF!";
+            System.out.println(tipo.getRotuloDocumento() + ": ");
+            documento = leitor.nextLine().trim();
+            erro = clienteValid.validarDocumento(tipo, documento);
+            if (erro == null && documentoJaCadastrado(documento.replaceAll("\\D", ""))) {
+                erro = "Já existe um cliente com esse " + tipo.getRotuloDocumento() + "!";
             }
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
+        documento = documento.replaceAll("\\D", "");
 
         String email;
         do {
@@ -80,8 +92,6 @@ public class ClienteController {
             }
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
-
-        cpf = CpfUtil.limpar(cpf);
 
         System.out.println("");
         System.out.println("===== Endereco =====");
@@ -129,18 +139,17 @@ public class ClienteController {
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
-        cpf    = CpfUtil.limpar(cpf);
         estado = CodRastreioGen.paraSigla(estado);
         cep    = cep.replaceAll("\\D", "");
         email  = email.toLowerCase();
 
         Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
-        Cliente novo = new Cliente(0,name, cpf, email, endCliente);
+        Cliente novo = new Cliente(0, name, tipo, documento, email, endCliente);
         try {
             clienteDao.inserir(novo);
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                System.out.println("Erro: já existe um cliente com esse CPF ou email.");
+                System.out.println("Erro: já existe um cliente com esse documento ou email.");
             } else {
                 System.out.println("Erro ao salvar no banco: " + e.getMessage());
             }

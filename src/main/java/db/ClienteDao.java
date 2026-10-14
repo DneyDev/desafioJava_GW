@@ -8,14 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import models.Cliente;
 import models.Endereco;
+import models.TipoCliente;
 
 public class ClienteDao {
 
-    public boolean existePorCpf(String cpf) throws SQLException {
-        String sql = "SELECT 1 FROM clientes WHERE cpf = ?";
-        try (Connection con = ConnectionService.getConnection(); //con é alias de Connection
-             PreparedStatement ps = con.prepareStatement(sql)) { //ps é o alias de PreparedStatement
-            ps.setString(1, cpf);
+    public boolean existePorDocumento(String documento) throws SQLException {
+        String sql = "SELECT 1 FROM clientes WHERE documento = ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, documento);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
@@ -34,7 +35,7 @@ public class ClienteDao {
     }
 
     public List<Cliente> listar() throws SQLException {
-        String sql = "SELECT c.id, c.nome, c.cpf, c.email, "
+        String sql = "SELECT c.id, c.nome, c.tipo, c.documento, c.email, "
                    + "e.rua, e.numero, e.cidade, e.estado, e.cep "
                    + "FROM clientes c JOIN enderecos e ON e.cliente_id = c.id "
                    + "ORDER BY c.id";
@@ -48,14 +49,15 @@ public class ClienteDao {
                     rs.getString("rua"), rs.getString("numero"));
                 lista.add(new Cliente(
                     rs.getInt("id"), rs.getString("nome"),
-                    rs.getString("cpf"), rs.getString("email"), end));
+                    TipoCliente.valueOf(rs.getString("tipo")),
+                    rs.getString("documento"), rs.getString("email"), end));
             }
         }
         return lista;
     }
 
     public void inserir(Cliente c) throws SQLException {
-        String sqlCliente = "INSERT INTO clientes (nome, cpf, email) VALUES (?, ?, ?) RETURNING id";
+        String sqlCliente = "INSERT INTO clientes (nome, tipo, documento, email) VALUES (?, ?, ?, ?) RETURNING id";
         String sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep) "
                            + "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -65,8 +67,9 @@ public class ClienteDao {
                  PreparedStatement psEnd = con.prepareStatement(sqlEndereco)) {
 
                 psCli.setString(1, c.getName());
-                psCli.setString(2, c.getCpf());
-                psCli.setString(3, c.getEmail());
+                psCli.setString(2, c.getTipo().name());
+                psCli.setString(3, c.getDocumento());
+                psCli.setString(4, c.getEmail());
                 int id;
                 try (ResultSet rs = psCli.executeQuery()) {
                     rs.next();

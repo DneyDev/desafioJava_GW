@@ -1,5 +1,6 @@
 package validation;
 
+import models.TipoCliente;
 import models.Cliente;
 import utils.*;
 import models.Endereco;
@@ -15,6 +16,8 @@ public class ClienteValid implements Valid<Cliente> {
         Pattern.compile("^[\\p{L}]+([ '\\-][\\p{L}]+)*$");
     // \p{L} aceita qualquer letra, inclusive acentuadas (á, ã, ç, é...).
     // ([ '\\-][\\p{L}]+)* permite espaços, apóstrofo e hífen entre as palavras, mas impede que o nome começe ou termine com esses símbolos
+    public static final Pattern RAZAO_SOCIAL_REGEX =
+        Pattern.compile("^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'/\\-]*$");
 
     public String validarCampo(String valor, String nomeCampo){
         if (valor == null || valor.isEmpty()) return nomeCampo + " é obrigatório!";
@@ -51,6 +54,29 @@ public class ClienteValid implements Valid<Cliente> {
         if (!CpfUtil.valido(cpf)) return "CPF inválido!";
         return null;
     }
+    public String validarRazaoSocial(String razao) {
+        String erro = validarCampo(razao, "Razão social", 255);
+        if (erro != null) return erro;
+        if (!RAZAO_SOCIAL_REGEX.matcher(razao.trim()).matches()) {
+            return "Razão social inválida! Use letras, números e os símbolos & . , - / '";
+        }
+        return null;
+    }
+
+    public String validarNome(String nome, TipoCliente tipo) {
+        return tipo == TipoCliente.PJ ? validarRazaoSocial(nome) : validarNome(nome);
+    }
+
+    public String validarCnpj(String cnpj) {
+        String erro = validarCampo(cnpj, "CNPJ");
+        if (erro != null) return erro;
+        if (!CnpjUtil.valido(cnpj)) return "CNPJ inválido!";
+        return null;
+    }
+
+    public String validarDocumento(TipoCliente tipo, String documento) {
+        return tipo == TipoCliente.PJ ? validarCnpj(documento) : validarCpf(documento);
+    }
 
     public String validarEmail(String email) {
         String erro = validarCampo(email, "Email", 255);
@@ -78,8 +104,11 @@ public class ClienteValid implements Valid<Cliente> {
     @Override
     public List<String> validar(Cliente cliente) {
         List<String> erros = new ArrayList<>();
-        addSeErro(erros, validarNome(cliente.getName()));
-        addSeErro(erros, validarCpf(cliente.getCpf()));
+        if (cliente.getTipo() == null) {
+            erros.add("Erro: Tipo de cliente é obrigatório!");
+        }
+        addSeErro(erros, validarNome(cliente.getName(), cliente.getTipo()));
+        addSeErro(erros, validarDocumento(cliente.getTipo(), cliente.getDocumento()));
         addSeErro(erros, validarEmail(cliente.getEmail()));
 
         Endereco end = cliente.getEnd();

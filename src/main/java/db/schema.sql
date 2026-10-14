@@ -1,10 +1,11 @@
 CREATE TABLE clientes (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    cpf CHAR(11) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE
+    tipo VARCHAR(2) NOT NULL DEFAULT 'PF' CHECK (tipo IN ('PF', 'PJ')),
+    documento VARCHAR(14) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    CHECK ((tipo = 'PF' AND length(documento) = 11) OR (tipo = 'PJ' AND length(documento) = 14))
 );
-
 CREATE TABLE enderecos (
     id SERIAL PRIMARY KEY,
     cliente_id INT NOT NULL UNIQUE

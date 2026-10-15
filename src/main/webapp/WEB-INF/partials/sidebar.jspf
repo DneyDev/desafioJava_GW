@@ -1,0 +1,40 @@
+<div class="sidebar">
+    <div>
+        <div class="logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h5l3 3v4h-8"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg>
+            VelozBR
+        </div>
+        <ul class="menu">
+            <li class="${paginaAtiva == 'painel' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/index.jsp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+                    Painel
+                </a>
+            </li>
+            <li class="${paginaAtiva == 'entregas' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/lista-entregas">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+                    Lista de Entregas
+                </a>
+            </li>
+            <li class="${paginaAtiva == 'nova-entrega' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/form-entrega.jsp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+                    Nova Entrega
+                </a>
+            </li>
+            <li class="${paginaAtiva == 'cliente' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/form-cliente.jsp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1"/><path d="M19 8v6M16 11h6"/></svg>
+                    Cadastrar Cliente
+                </a>
+            </li>
+            <li class="${paginaAtiva == 'produto' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/form-produto.jsp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"/><circle cx="8" cy="8" r="1.5"/></svg>
+                    Cadastrar Produto
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

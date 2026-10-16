@@ -20,8 +20,9 @@
             </div>
             
         </div>
+        <%@ include file="/WEB-INF/partials/alerta.jspf" %>
         <div class="table-card form-card">
-            <form action="${pageContext.request.contextPath}/cadastrar-cliente" method="post">
+            <form action="${pageContext.request.contextPath}/clientes" method="post">
                 <h3>Dados do cliente</h3>
                 <div class="form-grid">
                 <div class="form-group span-all">

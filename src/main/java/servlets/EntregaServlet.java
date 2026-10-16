@@ -38,7 +38,6 @@ public class EntregaServlet extends HttpServlet {
             int produtoId = Integer.parseInt(request.getParameter("produtoId"));
             int quantidade = Integer.parseInt(request.getParameter("quantidade"));
 
-            // 1. Busca o Cliente
             List<Cliente> clientes = clienteDao.listar();
             Cliente cliente = null;
             for (Cliente c : clientes) {
@@ -47,8 +46,6 @@ public class EntregaServlet extends HttpServlet {
                     break;
                 }
             }
-
-            // 2. Busca o Produto
             List<Produto> produtos = produtoDao.listar();
             Produto produto = null;
             for (Produto p : produtos) {
@@ -57,13 +54,10 @@ public class EntregaServlet extends HttpServlet {
                     break;
                 }
             }
-
             if (cliente == null || produto == null) {
-                response.sendRedirect("form-entrega.jsp?erro=dados_invalidos");
+                response.sendRedirect("form-entrega.jsp?erro=dados+incorreto");
                 return;
             }
-
-            // 3. Gera o Código de Rastreio
             String uf = "BR";
             if (cliente.getEnd() != null && cliente.getEnd().getEstado() != null) {
                 uf = CodRastreioGen.paraSigla(cliente.getEnd().getEstado());
@@ -86,7 +80,7 @@ public class EntregaServlet extends HttpServlet {
             response.setStatus(500);
             response.getWriter().println("Erro no banco de dados: " + e.getMessage());
         } catch (NumberFormatException e) {
-            response.sendRedirect("form-entrega.jsp?erro=formato_invalido");
+            response.sendRedirect("form-entrega.jsp?erro=formato+incorreto");
         }
     }
 }

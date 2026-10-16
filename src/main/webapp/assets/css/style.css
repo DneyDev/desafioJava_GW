@@ -86,3 +86,9 @@ tr:last-child td { border-bottom: none; }
     .sidebar { display: none; }
     .main-content { padding: 20px 16px; }
 }
+/* cores para os status das entregas */
+.alert { max-width: 760px; padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; font-weight: 500; }
+.alert ul { list-style: none; }
+.alert li + li { margin-top: 4px; }
+.alert-erro { background: #fbdcdc; color: #8a1f1f; border: 1px solid #f0b4b4; }
+.alert-sucesso { background: #dff3e4; color: #1b5e36; border: 1px solid #bfe8cc; }

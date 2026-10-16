@@ -20,9 +20,10 @@
             </div>
             
         </div>
+        <%@ include file="/WEB-INF/partials/alerta.jspf" %>
         <div class="table-card form-card">
             <h3>Dados do produto</h3>
-            <form action="${pageContext.request.contextPath}/cadastrar-produto" method="post">
+            <form action="${pageContext.request.contextPath}/produto" method="post">
                 <div class="form-grid">
                 <div class="form-group span-all">
                     <label for="nome">Nome do Produto</label>

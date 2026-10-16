@@ -1,0 +1,19 @@
+<%@ page pageEncoding="UTF-8" %>
+<%
+    String erroParam = request.getParameter("erro");
+    String sucessoParam = request.getParameter("sucesso");
+    java.util.function.Function<String, String> esc = s -> s.replace("&", "&amp;")
+            .replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+%>
+<% if (erroParam != null && !erroParam.isBlank()) { %>
+    <div class="alert alert-erro" role="alert">
+        <ul>
+            <% for (String msg : erroParam.split("\\|")) { %>
+                <li><%= esc.apply(msg.trim()) %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+<% if (sucessoParam != null && !sucessoParam.isBlank()) { %>
+    <div class="alert alert-sucesso" role="status"><%= esc.apply(sucessoParam) %></div>
+<% } %>

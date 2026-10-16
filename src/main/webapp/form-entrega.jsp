@@ -31,6 +31,7 @@
             </div>
             
         </div>
+        <%@ include file="/WEB-INF/partials/alerta.jspf" %>
         <div class="table-card form-card">
             <h3>Dados da entrega</h3>
             <form action="${pageContext.request.contextPath}/lancar-entrega" method="post">

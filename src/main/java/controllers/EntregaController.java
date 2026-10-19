@@ -8,6 +8,7 @@ import java.util.Set;
 import java.sql.SQLException;
 import db.EntregaDao;
 import models.Cliente;
+import models.Endereco;
 import models.Entrega;
 import models.Produto;
 import utils.CodRastreioGen;
@@ -77,7 +78,14 @@ public class EntregaController {
             return;
         }
 
-        String uf = CodRastreioGen.paraSigla(clientes.get(indice).getEnd().getEstado());
+        Cliente clienteSelecionado = clientes.get(indice);
+        if (clienteSelecionado.getEnderecos() == null || clienteSelecionado.getEnderecos().isEmpty()) {
+            System.out.println("Este cliente não possui um endereço cadastrado!");
+            return;
+        }
+
+        Endereco destino = clienteSelecionado.getEnderecos().get(0);
+        String uf = CodRastreioGen.paraSigla(destino.getEstado());
 
         Set<String> existentes = new HashSet<>();
         for (Entrega ent : entregas) existentes.add(ent.getIdRastreio());
@@ -87,8 +95,10 @@ public class EntregaController {
             System.out.println("Erro ao consultar o banco: " + ex.getMessage());
             return;
         }
+        
         String codigo = CodRastreioGen.gerar(uf, existentes);
-        Entrega novaEntrega = new Entrega(codigo, clientes.get(indice));
+        Endereco origem = destino; // Usando o destino como origem temporariamente na camada CLI
+        Entrega novaEntrega = new Entrega(codigo, clienteSelecionado, origem, destino);
 
         do {
             System.out.println("Produto(s): ");
@@ -122,7 +132,7 @@ public class EntregaController {
             entregaDao.salvar(novaEntrega);
         }catch(SQLException ex){
             System.out.println("Erro ao salvar entrega no banco: " + ex.getMessage());
-            return; //retorna o erro
+            return;
         }
         entregas.add(novaEntrega);
         System.out.println("Entrega registrada com sucesso!");

@@ -43,7 +43,7 @@ public class ProdutoServlet extends HttpServlet{
                 response.sendRedirect("form-produto.jsp?erro=" + msg);
                 return;
             }
-            if(dao.existePorNome(pesoProd)){
+            if(dao.existePorNome(nome)){
                 response.sendRedirect("form-produto.jsp?erro=Produto+existente");
                 return;
             }

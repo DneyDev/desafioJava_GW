@@ -1,4 +1,4 @@
-# Transportadora GW
+# VelozBR Transportadora
 
 Projeto Java desenvolvido para praticar programação orientada a objetos e modelagem de Banco de Dados com foco em cadastro de clientes, registro de produtos e gerenciamento de entregas.
 
@@ -53,13 +53,14 @@ erDiagram
     CLIENTES {
         SERIAL id PK
         VARCHAR_255 nome
-        CHAR_11 cpf UK
+        VARCHAR_2 tipo
+        VARCHAR_14 documento UK
         VARCHAR_255 email UK
     }
 
     ENDERECOS {
         SERIAL id PK
-        INT cliente_id FK
+        INT cliente_id FK, UK
         VARCHAR_255 rua
         VARCHAR_10 numero
         VARCHAR_100 cidade

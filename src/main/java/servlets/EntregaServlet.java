@@ -15,6 +15,7 @@ import db.ClienteDao;
 import db.EntregaDao;
 import db.ProdutoDao;
 import models.Cliente;
+import models.Endereco;
 import models.Entrega;
 import models.Produto;
 import utils.CodRastreioGen;
@@ -58,21 +59,26 @@ public class EntregaServlet extends HttpServlet {
                 response.sendRedirect("form-entrega.jsp?erro=dados+incorreto");
                 return;
             }
+            
             String uf = "BR";
-            if (cliente.getEnd() != null && cliente.getEnd().getEstado() != null) {
-                uf = CodRastreioGen.paraSigla(cliente.getEnd().getEstado());
+            Endereco destino = null;
+            if (cliente.getEnderecos() != null && !cliente.getEnderecos().isEmpty()) {
+                destino = cliente.getEnderecos().get(0);
+                if (destino.getEstado() != null) {
+                    uf = CodRastreioGen.paraSigla(destino.getEstado());
+                }
             }
             Set<String> existentes = entregaDao.codigosPorUf(uf);
             String codigoRastreio = CodRastreioGen.gerar(uf, existentes);
 
-            // 4. Cria a Entrega e Adiciona o Produto
-            Entrega entrega = new Entrega(codigoRastreio, cliente);
+            // A origem precisa ser vinculada. Como provisório para funcionar, usaremos o próprio destino.
+            // O ideal para o futuro é o usuário selecionar uma origem na tela.
+            Endereco origem = destino; 
+            Entrega entrega = new Entrega(codigoRastreio, cliente, origem, destino);
             entrega.addProd(produto, quantidade);
 
-            // 5. Salva no Banco de Dados
             entregaDao.salvar(entrega);
 
-            // 6. Redireciona para a Lista
             response.sendRedirect("lista-entregas");
 
         } catch (SQLException e) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -59,7 +60,9 @@ public class ClientesServlet extends HttpServlet {
             String numero = request.getParameter("numero").trim();
 
             Endereco end = new Endereco(estado, cidade, cep, rua, numero);
-            Cliente novo = new Cliente(0, nome, tipo, documento, email, end);
+            List<Endereco> enderecos = new ArrayList<>();
+            enderecos.add(end);
+            Cliente novo = new Cliente(0, nome, tipo, documento, email, enderecos);
 
             List<String> erros = clienteValid.validar(novo);
             if (!erros.isEmpty()) {

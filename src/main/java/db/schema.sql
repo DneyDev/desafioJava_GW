@@ -8,8 +8,8 @@ CREATE TABLE clientes (
 );
 CREATE TABLE enderecos (
     id SERIAL PRIMARY KEY,
-    cliente_id INT NOT NULL UNIQUE
-        REFERENCES clientes(id) ON DELETE CASCADE, --CASCADE para se o Cliente for deletado os dados irem juntos*
+    cliente_id INT NOT NULL
+        REFERENCES clientes(id) ON DELETE CASCADE, -- Removido o UNIQUE para permitir 1:N
     rua VARCHAR(255) NOT NULL,
     numero VARCHAR(10) NOT NULL,
     cidade VARCHAR(100) NOT NULL,
@@ -26,9 +26,11 @@ CREATE TABLE produtos (
 CREATE TABLE entregas (
     id SERIAL PRIMARY KEY,
     cliente_id INT NOT NULL
-        REFERENCES clientes(id) ON DELETE RESTRICT, --impede de apagar cliente pois terá uma entrega vinculada**
-    endereco_id INT NOT NULL
-        REFERENCES enderecos(id) ON DELETE RESTRICT, --    **
+        REFERENCES clientes(id) ON DELETE RESTRICT,
+    endereco_origem_id INT NOT NULL
+        REFERENCES enderecos(id) ON DELETE RESTRICT, -- Nova coluna Origem
+    endereco_destino_id INT NOT NULL
+        REFERENCES enderecos(id) ON DELETE RESTRICT, -- Nova coluna Destino
     codigo_rastreio CHAR(8) NOT NULL UNIQUE,
     status VARCHAR(20) NOT NULL DEFAULT 'Pendente'
         CHECK (status IN ('Pendente', 'Em transito', 'Entregue', 'Cancelada'))

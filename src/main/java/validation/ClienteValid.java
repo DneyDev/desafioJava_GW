@@ -14,8 +14,6 @@ public class ClienteValid implements Valid<Cliente> {
         Pattern.compile("^[\\w.+-]+@([\\w-]+\\.)+[a-z]{2,}$", Pattern.CASE_INSENSITIVE);
     public static final Pattern NOME_REGEX =
         Pattern.compile("^[\\p{L}]+([ '\\-][\\p{L}]+)*$");
-    // \p{L} aceita qualquer letra, inclusive acentuadas (á, ã, ç, é...).
-    // ([ '\\-][\\p{L}]+)* permite espaços, apóstrofo e hífen entre as palavras, mas impede que o nome começe ou termine com esses símbolos
     public static final Pattern RAZAO_SOCIAL_REGEX =
         Pattern.compile("^[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'/\\-]*$");
 
@@ -23,7 +21,7 @@ public class ClienteValid implements Valid<Cliente> {
         if (valor == null || valor.isEmpty()) return nomeCampo + " é obrigatório!";
         return null;
     }
-    public String validarCampo(String valor, String nomeCampo, int max) { //segundo validador para usar a Sobrecarga de método
+    public String validarCampo(String valor, String nomeCampo, int max) {
         String erro = validarCampo(valor, nomeCampo);
         if (erro != null) return erro;
         if (valor.length() > max) {
@@ -111,17 +109,19 @@ public class ClienteValid implements Valid<Cliente> {
         addSeErro(erros, validarDocumento(cliente.getTipo(), cliente.getDocumento()));
         addSeErro(erros, validarEmail(cliente.getEmail()));
 
-        Endereco end = cliente.getEnd();
-        if (end == null) {
-            erros.add("Erro: Endereço é obrigatório!");
+        List<Endereco> enderecos = cliente.getEnderecos();
+        if (enderecos == null || enderecos.isEmpty()) {
+            erros.add("Erro: Pelo menos um Endereço é obrigatório!");
         } else {
-            addSeErro(erros, validarEstado(end.getEstado()));
-            addSeErro(erros, validarCidade(end.getCidade()));
-            addSeErro(erros, validarCep(end.getCep()));
-            addSeErro(erros, validarCampo(end.getRua(), "Rua", 255));
-            addSeErro(erros, validarCampo(end.getNumero(), "Número", 10));
+            for (Endereco end : enderecos) {
+                addSeErro(erros, validarEstado(end.getEstado()));
+                addSeErro(erros, validarCidade(end.getCidade()));
+                addSeErro(erros, validarCep(end.getCep()));
+                addSeErro(erros, validarCampo(end.getRua(), "Rua", 255));
+                addSeErro(erros, validarCampo(end.getNumero(), "Número", 10));
+            }
         }
-            return erros;
+        return erros;
     }
 
     private void addSeErro(List<String> erros, String erro) {

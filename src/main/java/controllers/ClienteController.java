@@ -144,7 +144,10 @@ public class ClienteController {
         email  = email.toLowerCase();
 
         Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
-        Cliente novo = new Cliente(0, name, tipo, documento, email, endCliente);
+        List<Endereco> enderecos = new ArrayList<>();
+        enderecos.add(endCliente);
+        
+        Cliente novo = new Cliente(0, name, tipo, documento, email, enderecos);
         try {
             clienteDao.inserir(novo);
         } catch (SQLException e) {

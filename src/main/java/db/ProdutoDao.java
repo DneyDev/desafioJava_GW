@@ -22,7 +22,7 @@ public class ProdutoDao {
         String sql = "SELECT 1 FROM produtos WHERE nome = ?";
         try(Connection con = ConnectionService.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
-                ps.setString(0, prodName);
+                ps.setString(1, prodName);
                 try(ResultSet rs = ps.executeQuery()){
                     return rs.next();
                 }

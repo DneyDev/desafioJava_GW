@@ -15,6 +15,7 @@ import models.ItemEntrega;
 import models.Cliente;
 import models.Endereco;
 import models.Produto;
+import models.TipoCliente;
 
 public class EntregaDao {
 
@@ -82,12 +83,12 @@ public class EntregaDao {
     }
     public List<Entrega> listarTodas() throws SQLException{
         String sql = "SELECT en.id AS entrega_id, en.codigo_rastreio, en.status, "
-           + "c.id AS cliente_id, c.nome, c.cpf, c.email, "
-           + "e.rua, e.numero, e.cidade, e.estado, e.cep "
-           + "FROM entregas en "
-           + "JOIN clientes c ON c.id = en.cliente_id "
-           + "JOIN enderecos e ON e.id = en.endereco_id "
-           + "ORDER BY en.id";
+            + "c.id AS cliente_id, c.nome, c.tipo, c.documento, c.email, "
+            + "e.rua, e.numero, e.cidade, e.estado, e.cep "
+            + "FROM entregas en "
+            + "JOIN clientes c ON c.id = en.cliente_id "
+            + "JOIN enderecos e ON e.id = en.endereco_id "
+            + "ORDER BY en.id";
         String sqlItens = "SELECT ie.entrega_id, ie.quantidade, ie.preco_unitario, "
            + "p.id, p.nome, p.descricao, p.preco, p.peso "
            + "FROM itens_entrega ie "
@@ -104,8 +105,9 @@ public class EntregaDao {
                     rs.getString("rua"), rs.getString("numero")
                 );
                 Cliente cliente = new Cliente(
-                    rs.getInt("cliente_id"), rs.getString("nome"), 
-                    rs.getString("cpf"), rs.getString("email"), endereco
+                    rs.getInt("cliente_id"), rs.getString("nome"),
+                    TipoCliente.valueOf(rs.getString("tipo")),
+                    rs.getString("documento"), rs.getString("email"), endereco
                 );
                 Entrega entrega = new Entrega(
                     rs.getInt("entrega_id"),

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'war'
     id 'application'
+    id 'org.gretty' version '3.1.9'
 }
 
 repositories {
@@ -12,6 +13,12 @@ dependencies {
     providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
     providedCompile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.3'
     implementation 'org.postgresql:postgresql:42.7.12'
+}
+
+gretty {
+    contextPath = '/'
+    httpPort = 8080
+    servletContainer = 'tomcat9'
 }
 
 application {

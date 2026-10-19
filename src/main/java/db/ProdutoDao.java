@@ -18,6 +18,17 @@ import models.Produto;
 
 public class ProdutoDao {
 
+    public boolean existePorNome(String prodName) throws SQLException{
+        String sql = "SELECT 1 FROM produtos WHERE nome = ?";
+        try(Connection con = ConnectionService.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)){
+                ps.setString(1, prodName);
+                try(ResultSet rs = ps.executeQuery()){
+                    return rs.next();
+                }
+        }
+    }
+
     public void inserir(Produto p) throws SQLException {
         String sql = "INSERT INTO produtos (nome, descricao, preco, peso) VALUES (?, ?, ?, ?) RETURNING id";
         try (Connection con = ConnectionService.getConnection();

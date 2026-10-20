@@ -59,20 +59,23 @@ public class EntregaServlet extends HttpServlet {
                 response.sendRedirect("form-entrega.jsp?erro=dados+incorreto");
                 return;
             }
+            if(quantidade <= 0){
+                response.sendRedirect("form-entrega.jsp?erro=Quantidade+deve+ser+maior+que+zero");
+                return;
+            }
             
             String uf = "BR";
             Endereco destino = null;
-            if (cliente.getEnderecos() != null && !cliente.getEnderecos().isEmpty()) {
-                destino = cliente.getEnderecos().get(0);
-                if (destino.getEstado() != null) {
-                    uf = CodRastreioGen.paraSigla(destino.getEstado());
-                }
+            if (cliente.getEnderecos() == null || cliente.getEnderecos().isEmpty()) {
+                response.sendRedirect("form-entrega.jsp?erro=Cliente+sem+endereço+cadastrado!");
+                return;
+            }
+            destino = cliente.getEnderecos().get(0);
+            if (destino.getEstado() != null) {
+                uf = CodRastreioGen.paraSigla(destino.getEstado());
             }
             Set<String> existentes = entregaDao.codigosPorUf(uf);
             String codigoRastreio = CodRastreioGen.gerar(uf, existentes);
-
-            // A origem precisa ser vinculada. Como provisório para funcionar, usaremos o próprio destino.
-            // O ideal para o futuro é o usuário selecionar uma origem na tela.
             Endereco origem = destino; 
             Entrega entrega = new Entrega(codigoRastreio, cliente, origem, destino);
             entrega.addProd(produto, quantidade);
@@ -85,7 +88,7 @@ public class EntregaServlet extends HttpServlet {
             e.printStackTrace();
             response.setStatus(500);
             response.getWriter().println("Erro no banco de dados: " + e.getMessage());
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             response.sendRedirect("form-entrega.jsp?erro=formato+incorreto");
         }
     }

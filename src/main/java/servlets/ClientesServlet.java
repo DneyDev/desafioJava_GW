@@ -28,20 +28,21 @@ public class ClientesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
         try {
             List<Cliente> clientes = dao.listar();
+            PrintWriter out = resp.getWriter();
             out.println("<h1>Clientes</h1><ul>");
             for (Cliente c : clientes) {
                 out.println("<li>" + esc(c.getName()) + " - " + esc(c.getEmail()) + "</li>");
             }
             out.println("</ul>");
         } catch (SQLException e) {
-            resp.setStatus(500);
-            out.println("Erro ao consultar o banco: " + esc(e.getMessage()));
+            e.printStackTrace();
+            resp.sendRedirect("form-cliente.jsp?erro=" + URLEncoder.encode("Não foi possível consultar os clientes. Tente novamente.", "UTF-8"));
         }
     }
-    @Override 
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -66,31 +67,36 @@ public class ClientesServlet extends HttpServlet {
 
             List<String> erros = clienteValid.validar(novo);
             if (!erros.isEmpty()) {
-                String msg = URLEncoder.encode(erros.get(0), "UTF-8");
+                String msg = URLEncoder.encode(String.join("|", erros), "UTF-8");
                 response.sendRedirect("form-cliente.jsp?erro=" + msg);
                 return;
             }
             if (dao.existePorDocumento(documento)) {
-                response.sendRedirect("form-cliente.jsp?erro=documento_duplicado");
+                redirectErro(response, "Já existe um cliente cadastrado com esse CPF/CNPJ.");
                 return;
             }
             if (dao.existePorEmail(email)) {
-                response.sendRedirect("form-cliente.jsp?erro=email_duplicado");
+                redirectErro(response, "Já existe um cliente cadastrado com esse e-mail.");
                 return;
             }
+
             dao.inserir(novo);
-            response.sendRedirect("form-cliente.jsp?sucesso=Cliente+cadastrado+com+sucesso");
+            response.sendRedirect("form-cliente.jsp?sucesso="
+                    + URLEncoder.encode("Cliente cadastrado com sucesso.", "UTF-8"));
         } catch (SQLException e) {
             e.printStackTrace();
             if ("23505".equals(e.getSQLState())) {
-                response.sendRedirect("form-cliente.jsp?erro=cliente_duplicado");
+                redirectErro(response, "Já existe um cliente com esse CPF/CNPJ ou e-mail.");
             } else {
-                response.setStatus(500);
-                response.getWriter().println("Erro no banco de dados: " + e.getMessage());
+                redirectErro(response, "Não foi possível salvar o cliente. Tente novamente.");
             }
         } catch (IllegalArgumentException | NullPointerException e) {
-            response.sendRedirect("form-cliente.jsp?erro=formato_invalido");
+            redirectErro(response, "Formato inválido. Confira os dados informados.");
         }
+    }
+
+    private void redirectErro(HttpServletResponse response, String mensagem) throws IOException {
+        response.sendRedirect("form-cliente.jsp?erro=" + URLEncoder.encode(mensagem, "UTF-8"));
     }
 
     private String esc(String s) {

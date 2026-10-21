@@ -8,8 +8,7 @@ CREATE TABLE clientes (
 );
 CREATE TABLE enderecos (
     id SERIAL PRIMARY KEY,
-    cliente_id INT NOT NULL
-        REFERENCES clientes(id) ON DELETE CASCADE, -- Removido o UNIQUE para permitir 1:N
+    cliente_id INT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
     rua VARCHAR(255) NOT NULL,
     numero VARCHAR(10) NOT NULL,
     cidade VARCHAR(100) NOT NULL,
@@ -19,27 +18,27 @@ CREATE TABLE enderecos (
 CREATE TABLE produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    descricao TEXT NOT NULL,
-    preco NUMERIC(10,2) NOT NULL CHECK (preco > 0), -- check para não deixar a validação apenas no Java
+    descricao varchar(255) NOT NULL,
+    preco NUMERIC(10,2) NOT NULL CHECK (preco > 0),
     peso NUMERIC(8,3) NOT NULL CHECK (peso > 0)
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 CREATE TABLE entregas (
     id SERIAL PRIMARY KEY,
-    cliente_id INT NOT NULL
-        REFERENCES clientes(id) ON DELETE RESTRICT,
-    endereco_origem_id INT NOT NULL
-        REFERENCES enderecos(id) ON DELETE RESTRICT, -- Nova coluna Origem
-    endereco_destino_id INT NOT NULL
-        REFERENCES enderecos(id) ON DELETE RESTRICT, -- Nova coluna Destino
+    cliente_id INT NOT NULL REFERENCES clientes(id) ON DELETE RESTRICT,
+    origem_rua VARCHAR(255) NOT NULL,
+    origem_numero VARCHAR(10) NOT NULL,
+    origem_cidade VARCHAR(100) NOT NULL,
+    origem_estado CHAR(2) NOT NULL,
+    origem_cep CHAR(8) NOT NULL,
+    endereco_destino_id INT NOT NULL REFERENCES enderecos(id) ON DELETE RESTRICT,
     codigo_rastreio CHAR(8) NOT NULL UNIQUE,
     status VARCHAR(20) NOT NULL DEFAULT 'Pendente'
         CHECK (status IN ('Pendente', 'Em transito', 'Entregue', 'Cancelada'))
 );
 CREATE TABLE itens_entrega (
-    entrega_id INT NOT NULL
-        REFERENCES entregas(id) ON DELETE CASCADE, -- *
-    produto_id INT NOT NULL
-        REFERENCES produtos(id) ON DELETE RESTRICT, --impede apagar o produto pois é um registro da transportadora
+    entrega_id INT NOT NULL REFERENCES entregas(id) ON DELETE CASCADE,
+    produto_id INT NOT NULL REFERENCES produtos(id) ON DELETE RESTRICT,
     quantidade INT NOT NULL DEFAULT 1 CHECK (quantidade > 0),
     preco_unitario NUMERIC(10,2) NOT NULL CHECK (preco_unitario > 0),
     PRIMARY KEY (entrega_id, produto_id)

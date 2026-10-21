@@ -1,11 +1,3 @@
-/* 
-ALIAS LIST
-
-ps = PreparedStatement
-rs = ResultSet
-con = connection
-*/
-
 package db;
 
 import java.sql.Connection;
@@ -18,42 +10,91 @@ import models.Produto;
 
 public class ProdutoDao {
 
-    public boolean existePorNome(String prodName) throws SQLException{
-        String sql = "SELECT 1 FROM produtos WHERE nome = ?";
-        try(Connection con = ConnectionService.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)){
-                ps.setString(1, prodName);
-                try(ResultSet rs = ps.executeQuery()){
-                    return rs.next();
-                }
+    public boolean existePorNome(String nome) throws SQLException {
+        String sql = "SELECT 1 FROM produtos WHERE LOWER(nome) = LOWER(?) AND ativo = TRUE";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nome);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
-    public void inserir(Produto p) throws SQLException {
+    public boolean existePorNomeExceto(String nome, int id) throws SQLException {
+        String sql = "SELECT 1 FROM produtos WHERE LOWER(nome) = LOWER(?) AND id <> ? AND ativo = TRUE";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nome);
+            ps.setInt(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public Produto buscarPorId(int id) throws SQLException {
+        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos WHERE id = ? AND ativo = TRUE";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Produto(rs.getInt("id"), rs.getString("nome"), rs.getString("descricao"),
+                            rs.getBigDecimal("preco"), rs.getBigDecimal("peso"));
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean atualizar(Produto produto) throws SQLException {
+        String sql = "UPDATE produtos SET nome = ?, descricao = ?, preco = ?, peso = ? WHERE id = ? AND ativo = TRUE";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, produto.getProdName());
+            ps.setString(2, produto.getDesc());
+            ps.setBigDecimal(3, produto.getPrice());
+            ps.setBigDecimal(4, produto.getPeso());
+            ps.setInt(5, produto.getCodigo());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean excluir(int id) throws SQLException {
+        String sql = "UPDATE produtos SET ativo = FALSE WHERE id = ? AND ativo = TRUE";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public void inserir(Produto produto) throws SQLException {
         String sql = "INSERT INTO produtos (nome, descricao, preco, peso) VALUES (?, ?, ?, ?) RETURNING id";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, p.getProdName());
-            ps.setString(2, p.getDesc());
-            ps.setBigDecimal(3, p.getPrice());
-            ps.setBigDecimal(4, p.getPeso());
+            ps.setString(1, produto.getProdName());
+            ps.setString(2, produto.getDesc());
+            ps.setBigDecimal(3, produto.getPrice());
+            ps.setBigDecimal(4, produto.getPeso());
             try (ResultSet rs = ps.executeQuery()) {
-                if(rs.next()){ p.setCodigo(rs.getInt(1)); } //só vai tentar se realmente existir uma linha no banco
+                if (rs.next()) {
+                    produto.setCodigo(rs.getInt(1));
+                }
             }
         }
     }
 
     public List<Produto> listar() throws SQLException {
-        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos ORDER BY id";
+        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos WHERE ativo = TRUE ORDER BY id";
         List<Produto> lista = new ArrayList<>();
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                lista.add(new Produto(
-                    rs.getInt("id"), rs.getString("nome"),
-                    rs.getString("descricao"), rs.getBigDecimal("preco"),
-                    rs.getBigDecimal("peso")));
+                lista.add(new Produto(rs.getInt("id"), rs.getString("nome"), rs.getString("descricao"),
+                        rs.getBigDecimal("preco"), rs.getBigDecimal("peso")));
             }
         }
         return lista;

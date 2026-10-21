@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Comparator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="models.Entrega" %>
 <%@ page import="db.EntregaDao" %>
@@ -24,6 +26,13 @@
         totalProdutos = produtoDao.listar().size();
     } catch (Exception e) {
         entregas = java.util.Collections.emptyList();
+    }
+
+    // os indicadores acima usam todas as entregas; a tabela mostra só as 5 mais recentes (maior id primeiro)
+    List<Entrega> recentes = new ArrayList<>(entregas);
+    recentes.sort(Comparator.comparingInt(Entrega::getId).reversed());
+    if (recentes.size() > 5) {
+        recentes = recentes.subList(0, 5);
     }
 %>
 <% request.setAttribute("paginaAtiva", "painel"); %>
@@ -86,8 +95,8 @@
                     <tr><th>Código</th><th>Cliente</th><th>Status</th><th>Total</th></tr>
                 </thead>
                 <tbody>
-                    <% if (entregas != null && !entregas.isEmpty()) {
-                        for (Entrega e : entregas) {
+                    <% if (!recentes.isEmpty()) {
+                        for (Entrega e : recentes) {
                             String badgeClass = "badge-pendente";
                             if ("Entregue".equalsIgnoreCase(e.getStatus())) badgeClass = "badge-entregue";
                             else if ("Em transito".equalsIgnoreCase(e.getStatus())) badgeClass = "badge-transito";

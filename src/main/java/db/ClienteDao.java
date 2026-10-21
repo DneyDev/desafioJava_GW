@@ -36,81 +36,124 @@ public class ClienteDao {
         }
     }
 
+    public boolean existePorDocumentoExceto(String documento, int id) throws SQLException {
+        String sql = "SELECT 1 FROM clientes WHERE documento = ? AND id <> ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, documento);
+            ps.setInt(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean existePorEmailExceto(String email, int id) throws SQLException {
+        String sql = "SELECT 1 FROM clientes WHERE email = ? AND id <> ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setInt(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public Cliente buscarPorId(int id) throws SQLException {
+        for (Cliente cliente : listar()) {
+            if (cliente.getId() == id) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+
+    public boolean atualizar(Cliente cliente) throws SQLException {
+        String sql = "UPDATE clientes SET nome = ?, tipo = ?, documento = ?, email = ? WHERE id = ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, cliente.getName());
+            ps.setString(2, cliente.getTipo().name());
+            ps.setString(3, cliente.getDocumento());
+            ps.setString(4, cliente.getEmail());
+            ps.setInt(5, cliente.getId());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     public List<Cliente> listar() throws SQLException {
         String sql = "SELECT c.id AS cliente_id, c.nome, c.tipo, c.documento, c.email, "
                    + "e.id AS endereco_id, e.rua, e.numero, e.cidade, e.estado, e.cep "
                    + "FROM clientes c LEFT JOIN enderecos e ON e.cliente_id = c.id "
                    + "ORDER BY c.id, e.id";
-        
         Map<Integer, Cliente> porId = new LinkedHashMap<>();
-        
+
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
             while (rs.next()) {
                 int clienteId = rs.getInt("cliente_id");
-                
-                Cliente c = porId.get(clienteId);
-                if (c == null) {
-                    c = new Cliente(
-                        clienteId, rs.getString("nome"),
+                Cliente cliente = porId.get(clienteId);
+                if (cliente == null) {
+                    cliente = new Cliente(
+                        clienteId,
+                        rs.getString("nome"),
                         TipoCliente.valueOf(rs.getString("tipo")),
-                        rs.getString("documento"), rs.getString("email"), 
+                        rs.getString("documento"),
+                        rs.getString("email"),
                         new ArrayList<>()
                     );
-                    porId.put(clienteId, c);
+                    porId.put(clienteId, cliente);
                 }
-                
                 int enderecoId = rs.getInt("endereco_id");
                 if (enderecoId > 0) {
-                    Endereco end = new Endereco(
-                        enderecoId, clienteId, rs.getString("estado"), 
-                        rs.getString("cidade"), rs.getString("cep"),
-                        rs.getString("rua"), rs.getString("numero")
-                    );
-                    c.getEnderecos().add(end);
+                    cliente.getEnderecos().add(new Endereco(
+                        enderecoId,
+                        clienteId,
+                        rs.getString("estado"),
+                        rs.getString("cidade"),
+                        rs.getString("cep"),
+                        rs.getString("rua"),
+                        rs.getString("numero")
+                    ));
                 }
             }
         }
         return new ArrayList<>(porId.values());
     }
 
-    public void inserir(Cliente c) throws SQLException {
+    public void inserir(Cliente cliente) throws SQLException {
         String sqlCliente = "INSERT INTO clientes (nome, tipo, documento, email) VALUES (?, ?, ?, ?) RETURNING id";
-        String sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep) "
-                           + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = ConnectionService.getConnection()) {
             con.setAutoCommit(false);
-            try (PreparedStatement psCli = con.prepareStatement(sqlCliente);
-                 PreparedStatement psEnd = con.prepareStatement(sqlEndereco)) {
-
-                psCli.setString(1, c.getName());
-                psCli.setString(2, c.getTipo().name());
-                psCli.setString(3, c.getDocumento());
-                psCli.setString(4, c.getEmail());
+            try (PreparedStatement psCliente = con.prepareStatement(sqlCliente);
+                 PreparedStatement psEndereco = con.prepareStatement(sqlEndereco)) {
+                psCliente.setString(1, cliente.getName());
+                psCliente.setString(2, cliente.getTipo().name());
+                psCliente.setString(3, cliente.getDocumento());
+                psCliente.setString(4, cliente.getEmail());
                 int id;
-                try (ResultSet rs = psCli.executeQuery()) {
+                try (ResultSet rs = psCliente.executeQuery()) {
                     rs.next();
                     id = rs.getInt(1);
                 }
-
-                if (c.getEnderecos() != null) {
-                    for (Endereco e : c.getEnderecos()) {
-                        psEnd.setInt(1, id);
-                        psEnd.setString(2, e.getRua());
-                        psEnd.setString(3, e.getNumero());
-                        psEnd.setString(4, e.getCidade());
-                        psEnd.setString(5, e.getEstado());
-                        psEnd.setString(6, e.getCep());
-                        psEnd.addBatch();
+                if (cliente.getEnderecos() != null) {
+                    for (Endereco endereco : cliente.getEnderecos()) {
+                        psEndereco.setInt(1, id);
+                        psEndereco.setString(2, endereco.getRua());
+                        psEndereco.setString(3, endereco.getNumero());
+                        psEndereco.setString(4, endereco.getCidade());
+                        psEndereco.setString(5, endereco.getEstado());
+                        psEndereco.setString(6, endereco.getCep());
+                        psEndereco.addBatch();
                     }
-                    psEnd.executeBatch();
+                    psEndereco.executeBatch();
                 }
-
                 con.commit();
-                c.setId(id);
+                cliente.setId(id);
             } catch (SQLException ex) {
                 con.rollback();
                 throw ex;

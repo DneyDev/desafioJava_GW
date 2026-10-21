@@ -11,7 +11,7 @@ import models.Produto;
 public class ProdutoDao {
 
     public boolean existePorNome(String nome) throws SQLException {
-        String sql = "SELECT 1 FROM produtos WHERE LOWER(nome) = LOWER(?)";
+        String sql = "SELECT 1 FROM produtos WHERE LOWER(nome) = LOWER(?) AND ativo = TRUE";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nome);
@@ -22,7 +22,7 @@ public class ProdutoDao {
     }
 
     public boolean existePorNomeExceto(String nome, int id) throws SQLException {
-        String sql = "SELECT 1 FROM produtos WHERE LOWER(nome) = LOWER(?) AND id <> ?";
+        String sql = "SELECT 1 FROM produtos WHERE LOWER(nome) = LOWER(?) AND id <> ? AND ativo = TRUE";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nome);
@@ -34,7 +34,7 @@ public class ProdutoDao {
     }
 
     public Produto buscarPorId(int id) throws SQLException {
-        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos WHERE id = ?";
+        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos WHERE id = ? AND ativo = TRUE";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -49,7 +49,7 @@ public class ProdutoDao {
     }
 
     public boolean atualizar(Produto produto) throws SQLException {
-        String sql = "UPDATE produtos SET nome = ?, descricao = ?, preco = ?, peso = ? WHERE id = ?";
+        String sql = "UPDATE produtos SET nome = ?, descricao = ?, preco = ?, peso = ? WHERE id = ? AND ativo = TRUE";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, produto.getProdName());
@@ -62,7 +62,7 @@ public class ProdutoDao {
     }
 
     public boolean excluir(int id) throws SQLException {
-        String sql = "DELETE FROM produtos WHERE id = ?";
+        String sql = "UPDATE produtos SET ativo = FALSE WHERE id = ? AND ativo = TRUE";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -87,7 +87,7 @@ public class ProdutoDao {
     }
 
     public List<Produto> listar() throws SQLException {
-        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos ORDER BY id";
+        String sql = "SELECT id, nome, descricao, preco, peso FROM produtos WHERE ativo = TRUE ORDER BY id";
         List<Produto> lista = new ArrayList<>();
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);

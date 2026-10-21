@@ -36,7 +36,8 @@ public class EntregaDao {
 
     public void salvar(Entrega entrega) throws SQLException {
         String sqlEntrega = "INSERT INTO entregas (cliente_id, origem_rua, origem_numero, origem_cidade, origem_estado, origem_cep, endereco_destino_id, codigo_rastreio, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
-        String sqlItem = "INSERT INTO itens_entrega (entrega_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
+        String sqlItem = "INSERT INTO itens_entrega (entrega_id, produto_id, quantidade, preco_unitario) "
+                + "SELECT ?, p.id, ?, ? FROM produtos p WHERE p.id = ? AND p.ativo = TRUE";
 
         try (Connection con = ConnectionService.getConnection()) {
             con.setAutoCommit(false);
@@ -57,14 +58,10 @@ public class EntregaDao {
                     rs.next();
                     entregaId = rs.getInt(1);
                 }
+
                 for (ItemEntrega item : entrega.getItens()) {
-                    psItem.setInt(1, entregaId);
-                    psItem.setInt(2, item.getProduto().getCodigo());
-                    psItem.setInt(3, item.getQuantidade());
-                    psItem.setBigDecimal(4, item.getPrecoUnitario());
-                    psItem.addBatch();
+                    inserirItemAtivo(psItem, entregaId, item);
                 }
-                psItem.executeBatch();
                 con.commit();
             } catch (SQLException ex) {
                 con.rollback();
@@ -86,7 +83,8 @@ public class EntregaDao {
     public boolean atualizar(Entrega entrega) throws SQLException {
         String sqlEntrega = "UPDATE entregas SET origem_rua = ?, origem_numero = ?, origem_cidade = ?, origem_estado = ?, origem_cep = ?, endereco_destino_id = ? WHERE id = ? AND codigo_rastreio = ? AND status = 'Pendente'";
         String sqlExcluirItens = "DELETE FROM itens_entrega WHERE entrega_id = ?";
-        String sqlInserirItem = "INSERT INTO itens_entrega (entrega_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
+        String sqlInserirItem = "INSERT INTO itens_entrega (entrega_id, produto_id, quantidade, preco_unitario) "
+                + "SELECT ?, p.id, ?, ? FROM produtos p WHERE p.id = ? AND p.ativo = TRUE";
 
         try (Connection con = ConnectionService.getConnection()) {
             con.setAutoCommit(false);
@@ -110,11 +108,7 @@ public class EntregaDao {
                 psExcluirItens.setInt(1, entrega.getId());
                 psExcluirItens.executeUpdate();
                 for (ItemEntrega item : entrega.getItens()) {
-                    psInserirItem.setInt(1, entrega.getId());
-                    psInserirItem.setInt(2, item.getProduto().getCodigo());
-                    psInserirItem.setInt(3, item.getQuantidade());
-                    psInserirItem.setBigDecimal(4, item.getPrecoUnitario());
-                    psInserirItem.executeUpdate();
+                    inserirItemAtivo(psInserirItem, entrega.getId(), item);
                 }
                 con.commit();
                 return true;
@@ -122,6 +116,16 @@ public class EntregaDao {
                 con.rollback();
                 throw ex;
             }
+        }
+    }
+
+    private void inserirItemAtivo(PreparedStatement psItem, int entregaId, ItemEntrega item) throws SQLException {
+        psItem.setInt(1, entregaId);
+        psItem.setInt(2, item.getQuantidade());
+        psItem.setBigDecimal(3, item.getPrecoUnitario());
+        psItem.setInt(4, item.getProduto().getCodigo());
+        if (psItem.executeUpdate() == 0) {
+            throw new SQLException("Produto inexistente ou inativo.", "P0001");
         }
     }
 
@@ -179,6 +183,7 @@ public class EntregaDao {
                 lista.add(entrega);
                 porId.put(entrega.getId(), entrega);
             }
+
             try (PreparedStatement psItens = con.prepareStatement(sqlItens);
                  ResultSet rsItens = psItens.executeQuery()) {
                 while (rsItens.next()) {
@@ -190,7 +195,9 @@ public class EntregaDao {
                         rsItens.getInt("id"), rsItens.getString("nome"), rsItens.getString("descricao"),
                         rsItens.getBigDecimal("preco"), rsItens.getBigDecimal("peso")
                     );
-                    entrega.getItens().add(new ItemEntrega(produto, rsItens.getInt("quantidade"), rsItens.getBigDecimal("preco_unitario")));
+                    entrega.getItens().add(new ItemEntrega(
+                        produto, rsItens.getInt("quantidade"), rsItens.getBigDecimal("preco_unitario")
+                    ));
                 }
             }
         }

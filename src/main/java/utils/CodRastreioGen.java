@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CodRastreioGen {
     private static final String PAIS = "BR";
-    private static final int TOTAL_NUMEROS = 10_000; //entre 0 e 9999
+    private static final int TOTAL_NUMEROS = 10_000;
 
     private static final Map<String , String> ESTADOS = Map.ofEntries(
         Map.entry("ACRE", "AC"),
@@ -53,13 +53,11 @@ public class CodRastreioGen {
     public static boolean estadoValido(String estado) {
         return paraSigla(estado) != null;
     }
-
     public static String gerar(String estado, Set<String> existentes) {
         String uf = paraSigla(estado);
         if (uf == null) {
             throw new IllegalArgumentException("Estado inválido: " + estado);
         }
-
         int inicio = ThreadLocalRandom.current().nextInt(TOTAL_NUMEROS);
         for (int i = 0; i < TOTAL_NUMEROS; i++) {
             int numero = (inicio + i) % TOTAL_NUMEROS;

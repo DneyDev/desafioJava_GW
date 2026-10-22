@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="models.Endereco" %>
@@ -211,10 +210,10 @@
                            type="text"
                            name="cep"
                            class="form-control"
-                           maxlength="8"
+                           maxlength="9"
                            inputmode="numeric"
-                           pattern="[0-9]{8}"
-                           title="Informe os 8 números do CEP."
+                           pattern="([0-9]{8}|[0-9]{5}-[0-9]{3})"
+                           title="Informe o CEP com 8 números, com ou sem hífen (ex: 50000-000)."
                            value="<%= escHtml(cep) %>"
                            required>
                 </div>
@@ -231,14 +230,6 @@
 
     </div>
 </div>
-
-<script>
-    const cep = document.getElementById("cep");
-
-    cep.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, "").slice(0, 8);
-    });
-</script>
 
 </body>
 </html>

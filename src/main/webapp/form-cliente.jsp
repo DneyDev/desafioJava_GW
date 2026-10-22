@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="models.Cliente" %>
 <%@ page import="models.Endereco" %>
@@ -12,7 +11,6 @@
                 .replace("\"", "&quot;");
     }
 %>
-
 <%
     Cliente cliente = (Cliente) request.getAttribute("cliente");
     boolean editando = cliente != null;
@@ -42,7 +40,6 @@
     String estado = formularioEnviado ? request.getParameter("estado") : "MG";
     String cep = formularioEnviado ? request.getParameter("cep") : "";
 %>
-
 <% request.setAttribute("paginaAtiva", editando ? "lista-clientes" : "cliente"); %>
 
 <!DOCTYPE html>
@@ -222,7 +219,7 @@
                                    type="text"
                                    name="cep"
                                    class="form-control"
-                                   maxlength="8"
+                                   maxlength="9"
                                    inputmode="numeric"
                                    value="<%= escHtml(cep) %>"
                                    required>

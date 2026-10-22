@@ -1,4 +1,3 @@
-
 package servlets;
 
 import java.io.IOException;
@@ -27,58 +26,44 @@ public class ProdutoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
-
         try {
             String editar = request.getParameter("editar");
-
             if (editar != null && !editar.isBlank()) {
                 int id = Integer.parseInt(editar);
                 Produto produto = dao.buscarPorId(id);
-
                 if (produto == null) {
                     redirect(request, response, "/produtos",
                             "erro", "Produto não encontrado.");
                     return;
                 }
-
                 request.setAttribute("produto", produto);
-
                 request.getRequestDispatcher("/form-produto.jsp")
                        .forward(request, response);
                 return;
             }
-
             request.setAttribute("produtos", dao.listar());
-
             request.getRequestDispatcher("/lista-produtos.jsp")
                    .forward(request, response);
-
         } catch (SQLException e) {
             e.printStackTrace();
-
             redirect(request, response, "/form-produto.jsp",
                     "erro",
                     "Não foi possível consultar os produtos. Tente novamente.");
-
         } catch (IllegalArgumentException | NullPointerException e) {
             redirect(request, response, "/form-produto.jsp",
                     "erro", "Identificador de produto inválido.");
         }
     }
-
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-
         String acao = request.getParameter("acao");
         String idParam = request.getParameter("id");
-
         int id = 0;
         boolean editando = idParam != null && !idParam.isBlank();
-
         try {
             if ("excluir".equals(acao)) {
                 id = Integer.parseInt(idParam);
@@ -88,12 +73,10 @@ public class ProdutoServlet extends HttpServlet {
                             "erro", "Produto não encontrado.");
                     return;
                 }
-
                 redirect(request, response, "/produtos",
                         "sucesso", "Produto excluído com sucesso.");
                 return;
             }
-
             if (editando) {
                 id = Integer.parseInt(idParam);
 
@@ -103,22 +86,33 @@ public class ProdutoServlet extends HttpServlet {
                     return;
                 }
             }
-
             String nome = request.getParameter("nome").trim();
             String descricao = request.getParameter("descricao").trim();
+            BigDecimal preco;
+            try {
+                preco = parseDecimal(request.getParameter("preco"));
+            } catch (NumberFormatException e) {
+                mostrarFormularioComErro(
+                    request, response, editando, id,
+                    "Erro: Preço inválido! Digite um número (ex: 19,90)."
+                );
+                return;
+            }
+            BigDecimal peso;
 
-            BigDecimal preco = new BigDecimal(
-                request.getParameter("preco").trim()
-            );
+            try {
+                peso = parseDecimal(request.getParameter("peso"));
 
-            BigDecimal peso = new BigDecimal(
-                request.getParameter("peso").trim()
-            );
-
+            } catch (NumberFormatException e) {
+                mostrarFormularioComErro(
+                    request, response, editando, id,
+                    "Erro: Peso inválido! Digite um número em kg (ex: 2,5)."
+                );
+                return;
+            }
             Produto produto = new Produto(
                 id, nome, descricao, preco, peso
             );
-
             List<String> erros = produtoValid.validar(produto);
 
             if (!erros.isEmpty()) {
@@ -128,7 +122,6 @@ public class ProdutoServlet extends HttpServlet {
                 );
                 return;
             }
-
             if (editando
                     ? dao.existePorNomeExceto(nome, id)
                     : dao.existePorNome(nome)) {
@@ -139,50 +132,41 @@ public class ProdutoServlet extends HttpServlet {
                 );
                 return;
             }
-
             if (editando) {
                 if (!dao.atualizar(produto)) {
                     redirect(request, response, "/produtos",
                             "erro", "Produto não encontrado.");
                     return;
                 }
-
                 redirect(request, response, "/produtos",
                         "sucesso", "Produto atualizado com sucesso.");
-
             } else {
                 dao.inserir(produto);
 
                 redirect(request, response, "/form-produto.jsp",
                         "sucesso", "Produto cadastrado com sucesso.");
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
-
             if ("excluir".equals(acao) && "23503".equals(e.getSQLState())) {
                 redirect(request, response, "/produtos",
                         "erro",
                         "Este produto já foi usado em entregas e não pode ser excluído.");
-
             } else if ("23505".equals(e.getSQLState())) {
                 mostrarFormularioComErro(
                     request, response, editando, id,
                     "Já existe outro produto cadastrado com esse nome."
                 );
-
             } else if ("excluir".equals(acao)) {
                 redirect(request, response, "/produtos",
                         "erro",
                         "Não foi possível excluir o produto. Tente novamente.");
-
             } else {
                 mostrarFormularioComErro(
                     request, response, editando, id,
                     "Não foi possível salvar o produto. Tente novamente."
                 );
             }
-
         } catch (IllegalArgumentException | NullPointerException e) {
             mostrarFormularioComErro(
                 request, response, editando, id,
@@ -190,7 +174,14 @@ public class ProdutoServlet extends HttpServlet {
             );
         }
     }
+    private BigDecimal parseDecimal(String valor) {
+        if (valor == null || valor.isBlank()) {
+            throw new NumberFormatException("Valor numérico vazio");
+        }
 
+        // Permite tanto a vírgula decimal usada no Brasil quanto o ponto do HTML/JDBC.
+        return new BigDecimal(valor.trim().replace(',', '.'));
+    }
     private void mostrarFormularioComErro(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -198,18 +189,14 @@ public class ProdutoServlet extends HttpServlet {
             int id,
             String mensagem)
             throws ServletException, IOException {
-
         request.setAttribute("formSubmitted", true);
         request.setAttribute("erro", mensagem);
-
         if (editando && id > 0) {
             try {
                 Produto produto = dao.buscarPorId(id);
-
                 if (produto != null) {
                     request.setAttribute("produto", produto);
                 }
-
             } catch (SQLException e) {
                 throw new ServletException(
                     "Não foi possível recuperar o produto para exibir o formulário.",
@@ -219,11 +206,9 @@ public class ProdutoServlet extends HttpServlet {
         } else {
             request.removeAttribute("produto");
         }
-
         request.getRequestDispatcher("/form-produto.jsp")
                .forward(request, response);
     }
-
     private void redirect(
             HttpServletRequest request,
             HttpServletResponse response,

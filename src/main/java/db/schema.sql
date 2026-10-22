@@ -20,7 +20,7 @@ CREATE TABLE produtos (
     nome VARCHAR(255) NOT NULL,
     descricao varchar(255) NOT NULL,
     preco NUMERIC(10,2) NOT NULL CHECK (preco > 0),
-    peso NUMERIC(8,3) NOT NULL CHECK (peso > 0)
+    peso NUMERIC(8,3) NOT NULL CHECK (peso > 0),
     ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 CREATE TABLE entregas (

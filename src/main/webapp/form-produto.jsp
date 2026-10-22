@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="models.Produto" %>
 
@@ -11,7 +10,6 @@
                 .replace("\"", "&quot;");
     }
 %>
-
 <%
     Produto produto = (Produto) request.getAttribute("produto");
     boolean editando = produto != null;
@@ -35,7 +33,6 @@
             ? request.getParameter("peso")
             : (editando ? produto.getPeso().toPlainString() : "");
 %>
-
 <% request.setAttribute("paginaAtiva", editando ? "lista-produtos" : "produto"); %>
 
 <!DOCTYPE html>
@@ -107,7 +104,7 @@
                                   name="descricao"
                                   class="form-control"
                                   rows="4"
-                                  maxlength="2000"
+                                  maxlength="255"
                                   required><%= escHtml(descricao) %></textarea>
                     </div>
 

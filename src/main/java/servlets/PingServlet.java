@@ -13,6 +13,6 @@ public class PingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("text/plain;charset=UTF-8");
-        resp.getWriter().println("GW POO no ar!");
+        resp.getWriter().println("VelozBR está ativa");
     }
 }

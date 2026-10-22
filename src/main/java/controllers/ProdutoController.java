@@ -19,7 +19,6 @@ public class ProdutoController {
         this.leitor = leitor;
         carregarProdutos();
     }
-
     private void carregarProdutos() {
         try {
             produtos = produtoDao.listar();
@@ -27,7 +26,6 @@ public class ProdutoController {
             System.out.println("Erro ao carregar produtos do banco: " + e.getMessage());
         }
     }
-
     public void registrar() {
         ProdutoValid produtoValid = new ProdutoValid();
         Produto novoProduto;
@@ -45,16 +43,14 @@ public class ProdutoController {
             try {
                 price = new BigDecimal(leitor.nextLine().trim().replace(",", "."));
             } catch (NumberFormatException e) {
-                // fica null; o ProdutoValid rejeita
+                // fica null; o ProdutoValid rejeita*
             }
             
             System.out.println("Peso(Kg): ");
             BigDecimal peso = null;
             try{
                 peso = new BigDecimal(leitor.nextLine().trim().replace(",", "."));
-            }catch(NumberFormatException e){
-                //fica null pois o Produto Valid rejeita
-            }
+            }catch(NumberFormatException e){ } // *
 
             novoProduto = new Produto(0, prodName, descricao, price, peso);
             erros = produtoValid.validar(novoProduto);

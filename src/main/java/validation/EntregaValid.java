@@ -1,60 +1,102 @@
 package validation;
 
 import models.Entrega;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntregaValid implements Valid<Entrega>{
+public class EntregaValid implements Valid<Entrega> {
 
-    public static final List<String> STATUS_VALIDOS = List.of("Pendente", "Em transito", "Entregue", "Cancelada");
-    public static final List<String> STATUS_FINAIS = List.of("Entregue", "Cancelada"); //depois desses a entrega não muda mais
-
-    //aceita "pendente", "EM TRANSITO"... e devolve no formato padrão (ou null se não existir)
-    public static String statusPadrao(String status){
-        if(status == null) return null;
-        for(String s : STATUS_VALIDOS){
-            if(s.equalsIgnoreCase(status.trim())) return s;
+    public static final List<String> STATUS_VALIDOS = List.of(
+        "Pendente",
+        "Em transito",
+        "Entregue",
+        "Cancelada"
+    );
+    public static final List<String> STATUS_FINAIS = List.of(
+        "Entregue",
+        "Cancelada"
+    ); 
+    public static String statusPadrao(String status) {
+        if (status == null) {
+            return null;
+        }
+        for (String s : STATUS_VALIDOS) {
+            if (s.equalsIgnoreCase(status.trim())) {
+                return s;
+            }
         }
         return null;
     }
-
-    public String validarStatus(String status){
-        if(status == null || status.isBlank()) return "Status é obrigatório!";
-        if(statusPadrao(status) == null){
-            return "Status inválido! Use: " + String.join(", ", STATUS_VALIDOS) + ".";
+    public String validarStatus(String status) {
+        if (status == null || status.isBlank()) {
+            return "Status é obrigatório!";
+        }
+        if (statusPadrao(status) == null) {
+            return "Status inválido! Use: "
+                + String.join(", ", STATUS_VALIDOS)
+                + ".";
         }
         return null;
     }
-
-    public String validarStatusAtual(String statusAtual){ //só dá pra atualizar se a entrega ainda não terminou
-        if(statusAtual != null && STATUS_FINAIS.contains(statusAtual)){
-            return "Essa entrega já está " + statusAtual + " e não pode mais ser alterada!";
+    public String validarStatusAtual(String statusAtual) {
+        // Só é possível atualizar se a entrega ainda não terminou.
+        if (statusAtual != null
+                && STATUS_FINAIS.contains(statusAtual)) {
+            return "Essa entrega já está "
+                + statusAtual
+                + " e não pode mais ser alterada!";
         }
         return null;
     }
-
-    public String validarAtualizacaoStatus(String statusAtual, String novoStatus){
+    public String validarAtualizacaoStatus(
+            String statusAtual,
+            String novoStatus) {
         String erro = validarStatusAtual(statusAtual);
-        if(erro != null) return erro;
-        erro = validarStatus(novoStatus);
-        if(erro != null) return erro;
-        if(statusPadrao(novoStatus).equalsIgnoreCase(statusAtual)){
-            return "A entrega já está com o status " + statusAtual + "!";
+        if (erro != null) {
+            return erro;
         }
-        return null;
-    }
+        erro = validarStatus(novoStatus);
+        if (erro != null) {
+            return erro;
+        }
+        String atual = statusPadrao(statusAtual);
+        String proximo = statusPadrao(novoStatus);
 
+        if (atual == null) {
+            return "O status atual da entrega é inválido; não é possível atualizá-lo.";
+        }
+        if (proximo.equalsIgnoreCase(atual)) {
+            return "A entrega já está com o status " + atual + "!";
+        }
+        if ("Cancelada".equals(proximo)) {
+            return null;
+        }
+        if ("Pendente".equals(atual)
+                && "Em transito".equals(proximo)) {
+            return null;
+        }
+        if ("Em transito".equals(atual)
+                && "Entregue".equals(proximo)) {
+            return null;
+        }
+        if ("Pendente".equals(atual)
+                && "Entregue".equals(proximo)) {
+            return "A entrega precisa estar Em transito antes de ser marcada como Entregue.";
+        }
+        return "Não é possível editar o status após envio.";
+    }
     @Override
-    public List<String>validar(Entrega entrega){
+    public List<String> validar(Entrega entrega) {
         List<String> erros = new ArrayList<>();
-        if(entrega.getCliente() == null){
+        if (entrega.getCliente() == null) {
             erros.add("Erro: Cliente não encontrado!");
         }
-        if(entrega.getItens() == null || entrega.getItens().isEmpty()){
+        if (entrega.getItens() == null || entrega.getItens().isEmpty()) {
             erros.add("Erro: A entrega precisa ter ao menos um item!");
         }
         String erroStatus = validarStatus(entrega.getStatus());
-        if(erroStatus != null){
+        if (erroStatus != null) {
             erros.add("Erro: " + erroStatus);
         }
         return erros;

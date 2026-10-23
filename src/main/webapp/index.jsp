@@ -54,7 +54,7 @@
                 <div class="breadcrumbs">Home &gt; Painel</div>
                 <h1 class="page-title">Painel Operacional</h1>
             </div>
-            <a href="${pageContext.request.contextPath}/form-entrega.jsp" class="btn-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nova entrega</a>
+        <!--    <a href="${pageContext.request.contextPath}/form-entrega.jsp" class="btn-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nova entrega</a> -->
         </div>
         <div class="metrics-grid">
             <div class="metric-card">

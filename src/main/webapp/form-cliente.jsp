@@ -125,6 +125,8 @@
                         <label for="documento">CPF / CNPJ</label>
 
                         <input id="documento"
+                               data-mascara="<%= "PJ".equals(tipo) ? "##.###.###/####-##" : "###.###.###-##" %>"
+                                placeholder="<%= "PJ".equals(tipo) ? "00.000.000/0001-00" : "000.000.000-00" %>"
                                type="text"
                                name="documento"
                                class="form-control"
@@ -216,6 +218,8 @@
                             <label for="cep">CEP</label>
 
                             <input id="cep"
+                                   data-mascara="#####-###"
+                                   placeholder="00000-000"
                                    type="text"
                                    name="cep"
                                    class="form-control"

@@ -1,24 +1,47 @@
 (function () {
-    // Preenche o padrão com os dígitos digitados: '#' vira dígito, o resto é literal.
     function formatar(valor, padrao) {
         var digitos = valor.replace(/\D/g, '');
         var saida = '';
         var i = 0;
+
         for (var p = 0; p < padrao.length && i < digitos.length; p++) {
-            saida += padrao[p] === '#' ? digitos[i++] : padrao[p];
+            if (padrao[p] === '#') {
+                saida += digitos[i++];
+            } else {
+                saida += padrao[p];
+            }
         }
+
         return saida;
     }
 
     function aplicar(input) {
-        input.value = formatar(input.value, input.dataset.mascara);
+        var padrao = input.dataset.mascara;
+
+        if (!padrao) return;
+
+        input.value = formatar(input.value, padrao);
     }
 
-    // Liga a máscara em todo input que tenha o atributo data-mascara="..."
-    document.querySelectorAll('[data-mascara]').forEach(function (input) {
-        input.addEventListener('input', function () { aplicar(input); });
-        aplicar(input); // formata também o valor que já veio preenchido (edição)
-    });
+    function inicializar() {
+        document.querySelectorAll('[data-mascara]').forEach(function (input) {
+            if (input.dataset.mascaraInicializada === 'true') {
+                aplicar(input);
+                return;
+            }
 
-    window.aplicarMascara = aplicar; // usado pelo form-cliente ao trocar PF/PJ
+            input.addEventListener('input', function () {
+                aplicar(input);
+            });
+
+            input.dataset.mascaraInicializada = 'true';
+            aplicar(input);
+        });
+    }
+
+    window.aplicarMascara = function (input) {
+        aplicar(input);
+    };
+
+    inicializar();
 })();

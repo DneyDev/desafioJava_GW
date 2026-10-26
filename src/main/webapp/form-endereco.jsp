@@ -105,7 +105,7 @@
             <% } %>
 
             <h3>Dados do endereço</h3>
-
+            <p class="legenda-obrigatorio"><span>*</span> campo obrigatório</p>
             <div class="form-grid">
 
                 <div class="form-group span-all">

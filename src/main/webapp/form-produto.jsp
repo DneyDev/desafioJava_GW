@@ -83,7 +83,7 @@
                 <% } %>
 
                 <h3>Dados do produto</h3>
-
+                <p class="legenda-obrigatorio"><span>*</span> campo obrigatório</p>
                 <div class="form-grid">
                     <div class="form-group span-all">
                         <label for="nome">Nome do produto</label>

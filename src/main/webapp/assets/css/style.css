@@ -477,3 +477,15 @@ textarea.form-control {
         align-items: stretch;
     }
 }
+/* Asterisco vermelho no label de qualquer campo marcado com "required" */
+.form-group:has(.form-control[required]) > label::after {
+    content: " *";
+    color: #dc2626;
+}
+
+.legenda-obrigatorio {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0 0 12px;
+}
+.legenda-obrigatorio span { color: #dc2626; }

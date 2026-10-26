@@ -69,6 +69,7 @@
         <%@ include file="/WEB-INF/partials/alerta.jspf" %>
         <div class="table-card form-card">
             <h3>Dados da entrega</h3>
+            <p class="legenda-obrigatorio"><span>*</span> campo obrigatório</p>
             <form action="${pageContext.request.contextPath}<%= editando ? "/entregas/editar" : "/lancar-entrega" %>" method="post">
                 <% if (editando) { %>
                     <input type="hidden" name="codigo" value="<%= escHtml(entrega.getIdRastreio().trim()) %>">

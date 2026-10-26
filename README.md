@@ -1,10 +1,10 @@
 # VelozBR Transportadora
 
-Projeto de Onboarding feito em Java desenvolvido para praticar programação orientada a objetos, modelagem de banco de dados e desenvolvimento back-end, com foco em gerenciamento de entregas.
+Projeto de Onboarding feito em Java desenvolvido para praticar programação orientada a objetos, modelagem de banco de dados e desenvolvimento FullStack, com foco em gerenciamento de entregas.
 
 A aplicação tem **duas interfaces** sobre o mesmo núcleo (models, validation, db e utils):
 
-- **Terminal:** menu interativo via `Scanner` (`app.Main`).
+- **Terminal:** menu interativo via `Scanner` (`app.Main`). 
 - **Web:** painel com Servlets + JSP rodando em Tomcat 9 via Gretty.
 
 Os dados são persistidos em **PostgreSQL** através de JDBC puro, com camada DAO.
@@ -91,59 +91,59 @@ src/main/
 
 ```mermaid
 erDiagram
-
-    CLIENTES {
-        SERIAL id PK
-        VARCHAR_255 nome
-        VARCHAR_2 tipo "PF ou PJ"
-        VARCHAR_14 documento UK
-        VARCHAR_255 email UK
+    clientes {
+        int id PK
+        varchar nome
+        varchar tipo
+        varchar documento
+        varchar email
+    }
+    enderecos {
+        int id PK
+        int cliente_id FK
+        varchar rua
+        varchar numero
+        varchar cidade
+        char estado
+        char cep
+    }
+    produtos {
+        int id PK
+        varchar nome
+        varchar descricao
+        numeric preco
+        numeric peso
+        varchar unidade
+        boolean ativo
+    }
+    entregas {
+        int id PK
+        int cliente_id FK
+        varchar origem_nome
+        varchar origem_tipo
+        varchar origem_documento
+        varchar origem_email
+        varchar origem_rua
+        varchar origem_numero
+        varchar origem_cidade
+        char origem_estado
+        char origem_cep
+        int endereco_destino_id FK
+        char codigo_rastreio
+        varchar status
+    }
+    itens_entrega {
+        int entrega_id PK, FK
+        int produto_id PK, FK
+        int quantidade
+        numeric preco_unitario
     }
 
-    ENDERECOS {
-        SERIAL id PK
-        INT cliente_id FK
-        VARCHAR_255 rua
-        VARCHAR_10 numero
-        VARCHAR_100 cidade
-        CHAR_2 estado
-        CHAR_8 cep
-    }
-
-    PRODUTOS {
-        SERIAL id PK
-        VARCHAR_255 nome
-        VARCHAR_255 descricao
-        NUMERIC_10_2 preco
-        NUMERIC_8_3 peso
-        BOOLEAN ativo
-    }
-
-    ENTREGAS {
-        SERIAL id PK
-        INT cliente_id FK
-        INT endereco_destino_id FK
-        VARCHAR_255 origem_rua
-        VARCHAR_10 origem_numero
-        VARCHAR_100 origem_cidade
-        CHAR_2 origem_estado
-        CHAR_8 origem_cep
-        CHAR_8 codigo_rastreio UK
-        VARCHAR_20 status
-    }
-
-    ITENS_ENTREGA {
-        INT entrega_id PK, FK
-        INT produto_id PK, FK
-        INT quantidade
-        NUMERIC_10_2 preco_unitario
-    }
-
-    CLIENTES ||--o{ ENDERECOS : "possui"
-    CLIENTES ||--o{ ENTREGAS : "realiza"
-    ENDERECOS ||--o{ ENTREGAS : "destino"
-    ENTREGAS ||--o{ ITENS_ENTREGA : "contem"
-    PRODUTOS ||--o{ ITENS_ENTREGA : "compõe"
+    clientes ||--o{ enderecos : "possui"
+    clientes ||--o{ entregas : "solicita"
+    enderecos ||--o{ entregas : "é destino de"
+    entregas ||--|{ itens_entrega : "contém"
+    produtos ||--o{ itens_entrega : "faz parte de"
 ```
 
 ## Pré-requisitos
@@ -224,7 +224,7 @@ Fluxo típico:
 
 ## Observações importantes
 
-- O projeto é uma prática de orientação a objetos e back-end Java, não uma aplicação de produção.
+- O projeto é uma prática de orientação a objetos e FullStack Java, não uma aplicação de produção.
 - Não há autenticação nem controle de acesso nas telas web.
 - As credenciais de conexão (URL e usuário) estão fixas em `ConnectionService`; apenas a senha vem de variável de ambiente.
 

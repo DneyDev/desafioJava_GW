@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="models.Produto" %>
+<%@ page import="validation.ProdutoValid" %>
 
 <%!
     private static String escHtml(String s) {
@@ -32,6 +33,10 @@
     String peso = formularioEnviado
             ? request.getParameter("peso")
             : (editando ? produto.getPeso().toPlainString() : "");
+
+    String unidade = formularioEnviado
+            ? request.getParameter("unidade")
+            : (editando ? produto.getUnidade() : "kg");
 %>
 <% request.setAttribute("paginaAtiva", editando ? "lista-produtos" : "produto"); %>
 
@@ -83,7 +88,9 @@
                 <% } %>
 
                 <h3>Dados do produto</h3>
+
                 <p class="legenda-obrigatorio"><span>*</span> campo obrigatório</p>
+
                 <div class="form-grid">
                     <div class="form-group span-all">
                         <label for="nome">Nome do produto</label>
@@ -122,7 +129,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="peso">Peso (kg)</label>
+                        <label for="peso">Medida (peso ou volume)</label>
 
                         <input id="peso"
                                type="number"
@@ -132,6 +139,20 @@
                                min="0.001"
                                value="<%= escHtml(peso) %>"
                                required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unidade">Unidade</label>
+
+                        <select id="unidade" name="unidade"
+                                class="form-control" required>
+                            <% for (String u : ProdutoValid.UNIDADES_VALIDAS) { %>
+                                <option value="<%= u %>"
+                                    <%= u.equals(unidade) ? "selected" : "" %>>
+                                    <%= u %>
+                                </option>
+                            <% } %>
+                        </select>
                     </div>
                 </div>
 

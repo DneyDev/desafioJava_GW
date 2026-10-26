@@ -82,6 +82,17 @@ public class ClienteDao {
         }
     }
 
+    // Os endereços do cliente são apagados junto (ON DELETE CASCADE).
+    // Se o cliente tiver entregas, o Postgres recusa (ON DELETE RESTRICT) com SQLState 23503.
+    public boolean excluir(int id) throws SQLException {
+        String sql = "DELETE FROM clientes WHERE id = ?";
+        try (Connection con = ConnectionService.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     public List<Cliente> listar() throws SQLException {
         String sql = "SELECT c.id AS cliente_id, c.nome, c.tipo, c.documento, c.email, "
                    + "e.id AS endereco_id, e.rua, e.numero, e.cidade, e.estado, e.cep "

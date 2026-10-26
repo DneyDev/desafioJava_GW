@@ -11,6 +11,8 @@ public class Entrega {
     private List<ItemEntrega> itens;
     private String status;
     private Endereco origem;
+    // Remetente tem os mesmos dados de um cliente (nome, tipo, documento, e-mail); id = 0 (não é salvo em "clientes").
+    private Cliente remetente;
     private Endereco destino;
     
     public Entrega(String idRastreio, Cliente cliente, Endereco origem, Endereco destino){
@@ -80,6 +82,7 @@ public class Entrega {
     public Cliente getCliente(){ return cliente; }
     public List<ItemEntrega> getItens(){ return itens; }
     public Endereco getOrigem() { return origem; }
+    public Cliente getRemetente() { return remetente; }
     public Endereco getDestino() { return destino; }
     public String getStatus(){ return status; }
     
@@ -88,5 +91,6 @@ public class Entrega {
     public void setCliente(Cliente cliente){ this.cliente = cliente; }
     public void setStatus(String status){ this.status = status; }
     public void setOrigem(Endereco origem) { this.origem = origem; }
+    public void setRemetente(Cliente remetente) { this.remetente = remetente; }
     public void setDestino(Endereco destino) { this.destino = destino; }
 }

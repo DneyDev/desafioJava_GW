@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 public class ProdutoValid implements Valid<Produto> {
 
-    // Lista única de unidades: o <select> do form-produto.jsp e a validação usam a mesma.
     public static final List<String> UNIDADES_VALIDAS = List.of("kg", "g", "L", "mL");
 
     private static final BigDecimal PRECO_MAXIMO =

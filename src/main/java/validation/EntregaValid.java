@@ -40,7 +40,6 @@ public class EntregaValid implements Valid<Entrega> {
         return null;
     }
     public String validarStatusAtual(String statusAtual) {
-        // Só é possível atualizar se a entrega ainda não terminou.
         if (statusAtual != null
                 && STATUS_FINAIS.contains(statusAtual)) {
             return "Essa entrega já está "

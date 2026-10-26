@@ -31,6 +31,8 @@ CREATE TABLE produtos (
         CHECK (preco > 0),
     peso NUMERIC(8,3) NOT NULL
         CHECK (peso > 0),
+    unidade VARCHAR(2) NOT NULL DEFAULT 'kg'
+        CHECK (unidade IN ('kg', 'g', 'L', 'mL')),
     ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -38,6 +40,11 @@ CREATE TABLE entregas (
     id SERIAL PRIMARY KEY,
     cliente_id INT NOT NULL
         REFERENCES clientes(id) ON DELETE RESTRICT,
+    origem_nome VARCHAR(255) NOT NULL,
+    origem_tipo VARCHAR(2) NOT NULL
+        CHECK (origem_tipo IN ('PF', 'PJ')),
+    origem_documento VARCHAR(14) NOT NULL,
+    origem_email VARCHAR(255) NOT NULL,
     origem_rua VARCHAR(255) NOT NULL,
     origem_numero VARCHAR(10) NOT NULL,
     origem_cidade VARCHAR(100) NOT NULL,

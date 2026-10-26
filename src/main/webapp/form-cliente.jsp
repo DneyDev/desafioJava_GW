@@ -90,7 +90,7 @@
                 <% } %>
 
                 <h3>Dados do cliente</h3>
-
+                <p class="legenda-obrigatorio"><span>*</span> campo obrigatório</p>
                 <div class="form-grid">
                     <div class="form-group span-all">
                         <label for="nome">Nome do Cliente / Razão social</label>
@@ -289,48 +289,26 @@
         <% } %>
     </div>
 
-    <script>
-        (function () {
-            var tipo = document.getElementById('tipo');
-            var documento = document.getElementById('documento');
+    <script src="${pageContext.request.contextPath}/assets/js/mascaras.js"></script>
+        <script>
+            (function () {
+                var tipo = document.getElementById('tipo');
+                var documento = document.getElementById('documento');
+                var labelDocumento = document.querySelector('label[for="documento"]');
+                var labelNome = document.querySelector('label[for="nome"]');
 
-            var labelDocumento =
-                document.querySelector('label[for="documento"]');
+                function atualizarCampos() {
+                    var pj = tipo.value === 'PJ';
+                    labelDocumento.textContent = pj ? 'CNPJ' : 'CPF';
+                    labelNome.textContent = pj ? 'Razão social' : 'Nome do cliente';
+                    documento.placeholder = pj ? '00.000.000/0001-00' : '000.000.000-00';
+                    documento.dataset.mascara = pj ? '##.###.###/####-##' : '###.###.###-##';
+                    window.aplicarMascara(documento);
+                }
 
-            var labelNome =
-                document.querySelector('label[for="nome"]');
-
-            function atualizarCampos() {
-                var pj = tipo.value === 'PJ';
-
-                labelDocumento.textContent = pj ? 'CNPJ' : 'CPF';
-                labelNome.textContent = pj
-                    ? 'Razão social'
-                    : 'Nome do cliente';
-
-                documento.placeholder = pj
-                    ? '00.000.000/0001-00'
-                    : '000.000.000-00';
-            }
-
-            function filtrarDocumento() {
-                var limite = tipo.value === 'PJ' ? 14 : 11;
-
-                documento.value = documento.value
-                    .replace(/\D/g, '')
-                    .slice(0, limite);
-            }
-
-            documento.addEventListener('input', filtrarDocumento);
-
-            tipo.addEventListener('change', function () {
-                filtrarDocumento();
+                tipo.addEventListener('change', atualizarCampos);
                 atualizarCampos();
-            });
-
-            atualizarCampos();
-            filtrarDocumento();
-        })();
-    </script>
+            })();
+        </script>
 </body>
 </html>

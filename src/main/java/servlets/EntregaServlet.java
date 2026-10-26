@@ -16,11 +16,13 @@ import db.ProdutoDao;
 import models.Cliente;
 import models.Endereco;
 import models.Entrega;
+import models.TipoCliente;
 import models.Produto;
 import utils.CodRastreioGen;
+import validation.ClienteValid;
 import validation.EnderecoValid;
 
-@WebServlet(urlPatterns = {"/lancar-entrega", "/entregas/editar"})
+@WebServlet(urlPatterns = {"/lancar-entrega", "/entregas/editar", "/entregas/excluir"})
 public class EntregaServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -28,6 +30,7 @@ public class EntregaServlet extends HttpServlet {
     private final ClienteDao clienteDao = new ClienteDao();
     private final ProdutoDao produtoDao = new ProdutoDao();
     private final EnderecoValid enderecoValid = new EnderecoValid();
+    private final ClienteValid clienteValid = new ClienteValid();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -70,6 +73,13 @@ public class EntregaServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
+        // /entregas/excluir só apaga entregas Canceladas; o resto do doPost é cadastro/edição.
+        if ("/entregas/excluir".equals(request.getServletPath())) {
+            excluir(request, response);
+            return;
+        }
+
         boolean editando = "/entregas/editar".equals(request.getServletPath());
         String codigo = request.getParameter("codigo");
 
@@ -122,7 +132,18 @@ public class EntregaServlet extends HttpServlet {
                 request.getParameter("origemRua").trim(),
                 request.getParameter("origemNumero").trim()
             );
+            // Remetente: mesmos dados e mesmas validações de um cliente.
+            TipoCliente tipoRemetente = TipoCliente.valueOf(
+                request.getParameter("origemTipo").trim().toUpperCase());
+            String nomeRemetente = request.getParameter("origemNome").trim();
+            String documentoRemetente = request.getParameter("origemDocumento").replaceAll("\\D", "");
+            String emailRemetente = request.getParameter("origemEmail").trim().toLowerCase();
+            Cliente remetente = new Cliente(0, nomeRemetente, tipoRemetente,
+                    documentoRemetente, emailRemetente, null);
             List<String> errosEndereco = enderecoValid.validar(origem);
+            adicionarErroRemetente(errosEndereco, clienteValid.validarNome(nomeRemetente, tipoRemetente));
+            adicionarErroRemetente(errosEndereco, clienteValid.validarDocumento(tipoRemetente, documentoRemetente));
+            adicionarErroRemetente(errosEndereco, clienteValid.validarEmail(emailRemetente));
             if (!errosEndereco.isEmpty()) {
                 redirectErro(request, response, editando, codigo, String.join("|", errosEndereco));
                 return;
@@ -149,6 +170,7 @@ public class EntregaServlet extends HttpServlet {
             if (editando) {
                 Entrega atualizada = new Entrega(existente.getId(), existente.getIdRastreio(), cliente, origem, destino);
                 atualizada.setStatus(existente.getStatus());
+                atualizada.setRemetente(remetente);
                 atualizada.addProd(produto, quantidade);
                 if (!entregaDao.atualizar(atualizada)) {
                     redirectErro(request, response, false, codigo, "Somente entregas Pendentes podem ser editadas.");
@@ -162,6 +184,7 @@ public class EntregaServlet extends HttpServlet {
             Set<String> existentes = entregaDao.codigosPorUf(uf);
             String codigoRastreio = CodRastreioGen.gerar(uf, existentes);
             Entrega entrega = new Entrega(codigoRastreio, cliente, origem, destino);
+            entrega.setRemetente(remetente);
             entrega.addProd(produto, quantidade);
             entregaDao.salvar(entrega);
             redirect(request, response, "/lista-entregas", "sucesso", "Entrega cadastrada com sucesso.");
@@ -174,6 +197,36 @@ public class EntregaServlet extends HttpServlet {
             }
         } catch (IllegalArgumentException | NullPointerException e) {
             redirectErro(request, response, editando, codigo, "Formato inválido. Confira os dados informados.");
+        }
+    }
+
+    private void excluir(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String codigoRastreio = request.getParameter("codigoRastreio");
+
+        if (codigoRastreio == null || codigoRastreio.isBlank()) {
+            redirect(request, response, "/lista-entregas", "erro", "Código de rastreio obrigatório.");
+            return;
+        }
+
+        try {
+            // O DAO só apaga se o status for Cancelada; qualquer outra coisa retorna false.
+            if (!entregaDao.excluirCancelada(codigoRastreio.trim())) {
+                redirect(request, response, "/lista-entregas", "erro",
+                        "Só é possível excluir entregas canceladas.");
+                return;
+            }
+            redirect(request, response, "/lista-entregas", "sucesso", "Entrega excluída com sucesso.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            redirect(request, response, "/lista-entregas", "erro",
+                    "Não foi possível excluir a entrega. Tente novamente.");
+        }
+    }
+
+    private void adicionarErroRemetente(List<String> erros, String erro) {
+        if (erro != null) {
+            erros.add("Erro: Remetente - " + erro);
         }
     }
 

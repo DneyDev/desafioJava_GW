@@ -62,12 +62,25 @@ public class ClientesServlet extends HttpServlet {
                           HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String acao = request.getParameter("acao");
         String idParam = request.getParameter("id");
         int id = 0;
         boolean editando = idParam != null && !idParam.isBlank();
         Cliente existente = null;
 
         try {
+            if ("excluir".equals(acao)) {
+                id = Integer.parseInt(idParam);
+
+                if (!dao.excluir(id)) {
+                    redirect(request, response, "/clientes",
+                            "erro", "Cliente não encontrado.");
+                    return;
+                }
+                redirect(request, response, "/clientes",
+                        "sucesso", "Cliente excluído com sucesso.");
+                return;
+            }
             List<Endereco> enderecos = new ArrayList<>();
             if (editando) {
                 id = Integer.parseInt(idParam);
@@ -174,7 +187,13 @@ public class ClientesServlet extends HttpServlet {
                     "sucesso", "Cliente cadastrado com sucesso.");
         } catch (SQLException e) {
             e.printStackTrace();
-            if ("23505".equals(e.getSQLState())) {
+            if ("excluir".equals(acao)) {
+                redirect(request, response, "/clientes",
+                        "erro",
+                        "23503".equals(e.getSQLState())
+                            ? "Este cliente possui entregas e não pode ser excluído."
+                            : "Não foi possível excluir o cliente. Tente novamente.");
+            } else if ("23505".equals(e.getSQLState())) {
                 mostrarFormularioComErro(
                     request, response, editando, existente,
                     "Já existe um cliente com esse CPF/CNPJ ou e-mail."
@@ -186,6 +205,11 @@ public class ClientesServlet extends HttpServlet {
                 );
             }
         } catch (IllegalArgumentException | NullPointerException e) {
+            if ("excluir".equals(acao)) {
+                redirect(request, response, "/clientes",
+                        "erro", "Identificador de cliente inválido.");
+                return;
+            }
             mostrarFormularioComErro(
                 request, response, editando, existente,
                 "Formato inválido. Confira os dados informados."

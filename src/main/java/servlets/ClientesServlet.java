@@ -1,3 +1,4 @@
+
 package servlets;
 
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class ClientesServlet extends HttpServlet {
                     "erro", "Identificador de cliente inválido.");
         }
     }
+
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
@@ -81,6 +83,7 @@ public class ClientesServlet extends HttpServlet {
                         "sucesso", "Cliente excluído com sucesso.");
                 return;
             }
+
             List<Endereco> enderecos = new ArrayList<>();
             if (editando) {
                 id = Integer.parseInt(idParam);
@@ -105,6 +108,7 @@ public class ClientesServlet extends HttpServlet {
                     new Endereco(estado, cidade, cep, rua, numero, bairro)
                 );
             }
+
             TipoCliente tipo = TipoCliente.valueOf(
                 request.getParameter("tipo").trim().toUpperCase()
             );
@@ -117,6 +121,7 @@ public class ClientesServlet extends HttpServlet {
             Cliente cliente = new Cliente(
                 id, nome, tipo, documento, email, enderecos
             );
+
             List<String> erros = new ArrayList<>();
             if (editando && enderecos.isEmpty()) {
                 adicionarErro(erros,
@@ -130,6 +135,7 @@ public class ClientesServlet extends HttpServlet {
             } else {
                 erros = clienteValid.validar(cliente);
             }
+
             if (!erros.isEmpty()) {
                 mostrarFormularioComErro(
                     request, response, editando, existente,
@@ -137,6 +143,7 @@ public class ClientesServlet extends HttpServlet {
                 );
                 return;
             }
+
             for (Endereco endereco : enderecos) {
                 if (endereco.getCep() != null) {
                     endereco.setCep(
@@ -144,6 +151,7 @@ public class ClientesServlet extends HttpServlet {
                     );
                 }
             }
+
             if (editando) {
                 if (dao.existePorDocumentoExceto(documento, id)) {
                     mostrarFormularioComErro(
@@ -152,6 +160,7 @@ public class ClientesServlet extends HttpServlet {
                     );
                     return;
                 }
+
                 if (dao.existePorEmailExceto(email, id)) {
                     mostrarFormularioComErro(
                         request, response, true, existente,
@@ -159,15 +168,18 @@ public class ClientesServlet extends HttpServlet {
                     );
                     return;
                 }
+
                 if (!dao.atualizar(cliente)) {
                     redirect(request, response, "/clientes",
                             "erro", "Cliente não encontrado.");
                     return;
                 }
+
                 redirect(request, response, "/clientes",
                         "sucesso", "Cliente atualizado com sucesso.");
                 return;
             }
+
             if (dao.existePorDocumento(documento)) {
                 mostrarFormularioComErro(
                     request, response, false, null,
@@ -175,6 +187,7 @@ public class ClientesServlet extends HttpServlet {
                 );
                 return;
             }
+
             if (dao.existePorEmail(email)) {
                 mostrarFormularioComErro(
                     request, response, false, null,
@@ -182,6 +195,7 @@ public class ClientesServlet extends HttpServlet {
                 );
                 return;
             }
+
             dao.inserir(cliente);
 
             redirect(request, response, "/form-cliente.jsp",
@@ -192,7 +206,7 @@ public class ClientesServlet extends HttpServlet {
                 redirect(request, response, "/clientes",
                         "erro",
                         "23503".equals(e.getSQLState())
-                            ? "Este cliente possui entregas e não pode ser excluído."
+                            ? "Este cliente possui entregas vinculadas ou um de seus endereços é usado como destino. Não é possível excluí-lo para preservar o histórico."
                             : "Não foi possível excluir o cliente. Tente novamente.");
             } else if ("23505".equals(e.getSQLState())) {
                 mostrarFormularioComErro(
@@ -211,12 +225,14 @@ public class ClientesServlet extends HttpServlet {
                         "erro", "Identificador de cliente inválido.");
                 return;
             }
+
             mostrarFormularioComErro(
                 request, response, editando, existente,
                 "Formato inválido. Confira os dados informados."
             );
         }
     }
+
     private void mostrarFormularioComErro(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -234,11 +250,13 @@ public class ClientesServlet extends HttpServlet {
         request.getRequestDispatcher("/form-cliente.jsp")
                .forward(request, response);
     }
+
     private void adicionarErro(List<String> erros, String erro) {
         if (erro != null) {
             erros.add("Erro: " + erro);
         }
     }
+
     private void redirect(
             HttpServletRequest request,
             HttpServletResponse response,

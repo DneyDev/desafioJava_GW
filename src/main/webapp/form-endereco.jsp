@@ -38,6 +38,7 @@
 
     String rua = editando ? endereco.getRua() : "";
     String numero = editando ? endereco.getNumero() : "";
+    String bairro = editando ? endereco.getBairro() : "";
     String cidade = editando ? endereco.getCidade() : "";
     String estado = editando ? endereco.getEstado() : "MG";
     String cep = editando ? endereco.getCep() : "";
@@ -159,6 +160,17 @@
                            class="form-control"
                            maxlength="10"
                            value="<%= escHtml(numero) %>"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input id="bairro"
+                           type="text"
+                           name="bairro"
+                           class="form-control"
+                           maxlength="100"
+                           value="<%= escHtml(bairro) %>"
                            required>
                 </div>
 

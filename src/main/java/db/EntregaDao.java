@@ -35,7 +35,7 @@ public class EntregaDao {
     }
 
     public void salvar(Entrega entrega) throws SQLException {
-        String sqlEntrega = "INSERT INTO entregas (cliente_id, origem_nome, origem_tipo, origem_documento, origem_email, origem_rua, origem_numero, origem_cidade, origem_estado, origem_cep, endereco_destino_id, codigo_rastreio, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        String sqlEntrega = "INSERT INTO entregas (cliente_id, origem_nome, origem_tipo, origem_documento, origem_email, origem_rua, origem_numero, origem_cidade, origem_estado, origem_cep, endereco_destino_id, codigo_rastreio, status, origem_bairro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
         String sqlItem = "INSERT INTO itens_entrega (entrega_id, produto_id, quantidade, preco_unitario) "
                 + "SELECT ?, p.id, ?, ? FROM produtos p WHERE p.id = ? AND p.ativo = TRUE";
 
@@ -56,6 +56,7 @@ public class EntregaDao {
                 psEntrega.setInt(11, entrega.getDestino().getId());
                 psEntrega.setString(12, entrega.getIdRastreio());
                 psEntrega.setString(13, entrega.getStatus());
+                psEntrega.setString(14, entrega.getOrigem().getBairro());
 
                 int entregaId;
                 try (ResultSet rs = psEntrega.executeQuery()) {
@@ -85,7 +86,7 @@ public class EntregaDao {
     }
 
     public boolean atualizar(Entrega entrega) throws SQLException {
-        String sqlEntrega = "UPDATE entregas SET origem_nome = ?, origem_tipo = ?, origem_documento = ?, origem_email = ?, origem_rua = ?, origem_numero = ?, origem_cidade = ?, origem_estado = ?, origem_cep = ?, endereco_destino_id = ? WHERE id = ? AND codigo_rastreio = ? AND status = 'Pendente'";
+        String sqlEntrega = "UPDATE entregas SET origem_nome = ?, origem_tipo = ?, origem_documento = ?, origem_email = ?, origem_rua = ?, origem_numero = ?, origem_cidade = ?, origem_estado = ?, origem_cep = ?, endereco_destino_id = ?, origem_bairro = ? WHERE id = ? AND codigo_rastreio = ? AND status = 'Pendente'";
         String sqlExcluirItens = "DELETE FROM itens_entrega WHERE entrega_id = ?";
         String sqlInserirItem = "INSERT INTO itens_entrega (entrega_id, produto_id, quantidade, preco_unitario) "
                 + "SELECT ?, p.id, ?, ? FROM produtos p WHERE p.id = ? AND p.ativo = TRUE";
@@ -105,8 +106,9 @@ public class EntregaDao {
                 psEntrega.setString(8, entrega.getOrigem().getEstado());
                 psEntrega.setString(9, entrega.getOrigem().getCep());
                 psEntrega.setInt(10, entrega.getDestino().getId());
-                psEntrega.setInt(11, entrega.getId());
-                psEntrega.setString(12, entrega.getIdRastreio());
+                psEntrega.setString(11, entrega.getOrigem().getBairro());
+                psEntrega.setInt(12, entrega.getId());
+                psEntrega.setString(13, entrega.getIdRastreio());
 
                 if (psEntrega.executeUpdate() == 0) {
                     con.rollback();
@@ -172,8 +174,8 @@ public class EntregaDao {
     public List<Entrega> listarTodas() throws SQLException {
         String sql = "SELECT en.id AS entrega_id, en.codigo_rastreio, en.status, "
             + "c.id AS cliente_id, c.nome, c.tipo, c.documento, c.email, "
-            + "en.origem_nome AS orig_nome, en.origem_tipo AS orig_tipo, en.origem_documento AS orig_documento, en.origem_email AS orig_email, en.origem_rua AS orig_rua, en.origem_numero AS orig_numero, en.origem_cidade AS orig_cidade, en.origem_estado AS orig_estado, en.origem_cep AS orig_cep, "
-            + "dest.id AS dest_id, dest.cliente_id AS dest_cliente_id, dest.rua AS dest_rua, dest.numero AS dest_numero, dest.cidade AS dest_cidade, dest.estado AS dest_estado, dest.cep AS dest_cep "
+            + "en.origem_nome AS orig_nome, en.origem_tipo AS orig_tipo, en.origem_documento AS orig_documento, en.origem_email AS orig_email, en.origem_rua AS orig_rua, en.origem_numero AS orig_numero, en.origem_cidade AS orig_cidade, en.origem_estado AS orig_estado, en.origem_cep AS orig_cep, en.origem_bairro AS orig_bairro, "
+            + "dest.id AS dest_id, dest.cliente_id AS dest_cliente_id, dest.rua AS dest_rua, dest.numero AS dest_numero, dest.cidade AS dest_cidade, dest.estado AS dest_estado, dest.cep AS dest_cep, dest.bairro AS dest_bairro "
             + "FROM entregas en JOIN clientes c ON c.id = en.cliente_id "
             + "JOIN enderecos dest ON dest.id = en.endereco_destino_id ORDER BY en.id";
         String sqlItens = "SELECT ie.entrega_id, ie.quantidade, ie.preco_unitario, p.id, p.nome, p.descricao, p.preco, p.peso, p.unidade "
@@ -187,11 +189,11 @@ public class EntregaDao {
             while (rs.next()) {
                 Endereco origem = new Endereco(
                     rs.getString("orig_estado"), rs.getString("orig_cidade"), rs.getString("orig_cep"),
-                    rs.getString("orig_rua"), rs.getString("orig_numero")
+                    rs.getString("orig_rua"), rs.getString("orig_numero"), rs.getString("orig_bairro")
                 );
                 Endereco destino = new Endereco(
                     rs.getInt("dest_id"), rs.getInt("dest_cliente_id"), rs.getString("dest_estado"),
-                    rs.getString("dest_cidade"), rs.getString("dest_cep"), rs.getString("dest_rua"), rs.getString("dest_numero")
+                    rs.getString("dest_cidade"), rs.getString("dest_cep"), rs.getString("dest_rua"), rs.getString("dest_numero"), rs.getString("dest_bairro")
                 );
                 Cliente cliente = new Cliente(
                     rs.getInt("cliente_id"), rs.getString("nome"), TipoCliente.valueOf(rs.getString("tipo")),

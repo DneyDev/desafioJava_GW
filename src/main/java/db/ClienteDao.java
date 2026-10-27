@@ -95,7 +95,7 @@ public class ClienteDao {
 
     public List<Cliente> listar() throws SQLException {
         String sql = "SELECT c.id AS cliente_id, c.nome, c.tipo, c.documento, c.email, "
-                   + "e.id AS endereco_id, e.rua, e.numero, e.cidade, e.estado, e.cep "
+                   + "e.id AS endereco_id, e.rua, e.numero, e.cidade, e.estado, e.cep, e.bairro "
                    + "FROM clientes c LEFT JOIN enderecos e ON e.cliente_id = c.id "
                    + "ORDER BY c.id, e.id";
         Map<Integer, Cliente> porId = new LinkedHashMap<>();
@@ -126,7 +126,8 @@ public class ClienteDao {
                         rs.getString("cidade"),
                         rs.getString("cep"),
                         rs.getString("rua"),
-                        rs.getString("numero")
+                        rs.getString("numero"),
+                        rs.getString("bairro")
                     ));
                 }
             }
@@ -136,7 +137,7 @@ public class ClienteDao {
 
     public void inserir(Cliente cliente) throws SQLException {
         String sqlCliente = "INSERT INTO clientes (nome, tipo, documento, email) VALUES (?, ?, ?, ?) RETURNING id";
-        String sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep, bairro) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = ConnectionService.getConnection()) {
             con.setAutoCommit(false);
@@ -159,6 +160,7 @@ public class ClienteDao {
                         psEndereco.setString(4, endereco.getCidade());
                         psEndereco.setString(5, endereco.getEstado());
                         psEndereco.setString(6, endereco.getCep());
+                        psEndereco.setString(7, endereco.getBairro());
                         psEndereco.addBatch();
                     }
                     psEndereco.executeBatch();

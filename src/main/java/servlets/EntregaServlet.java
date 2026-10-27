@@ -130,7 +130,8 @@ public class EntregaServlet extends HttpServlet {
                 request.getParameter("origemCidade").trim(),
                 request.getParameter("origemCep").replaceAll("\\D", ""),
                 request.getParameter("origemRua").trim(),
-                request.getParameter("origemNumero").trim()
+                request.getParameter("origemNumero").trim(),
+                request.getParameter("origemBairro").trim()
             );
             // Remetente: mesmos dados e mesmas validações de um cliente.
             TipoCliente tipoRemetente = TipoCliente.valueOf(
@@ -233,6 +234,7 @@ public class EntregaServlet extends HttpServlet {
     private boolean enderecosIguais(Endereco origem, Endereco destino) {
         return origem.getRua().trim().equalsIgnoreCase(destino.getRua().trim())
                 && origem.getNumero().trim().equalsIgnoreCase(destino.getNumero().trim())
+                && origem.getBairro().trim().equalsIgnoreCase(destino.getBairro().trim())
                 && origem.getCidade().trim().equalsIgnoreCase(destino.getCidade().trim())
                 && origem.getEstado().trim().equalsIgnoreCase(destino.getEstado().trim())
                 && origem.getCep().replaceAll("\\D", "").equals(destino.getCep().replaceAll("\\D", ""));

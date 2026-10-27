@@ -11,7 +11,7 @@ import models.Endereco;
 public class EnderecoDao {
 
     public List<Endereco> listarPorCliente(int clienteId) throws SQLException {
-        String sql = "SELECT id, cliente_id, rua, numero, cidade, estado, cep FROM enderecos WHERE cliente_id = ? ORDER BY id";
+        String sql = "SELECT id, cliente_id, rua, numero, cidade, estado, cep, bairro FROM enderecos WHERE cliente_id = ? ORDER BY id";
         List<Endereco> lista = new ArrayList<>();
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -20,7 +20,7 @@ public class EnderecoDao {
                 while (rs.next()) {
                     lista.add(new Endereco(
                         rs.getInt("id"), rs.getInt("cliente_id"), rs.getString("estado"),
-                        rs.getString("cidade"), rs.getString("cep"), rs.getString("rua"), rs.getString("numero")
+                        rs.getString("cidade"), rs.getString("cep"), rs.getString("rua"), rs.getString("numero"), rs.getString("bairro")
                     ));
                 }
             }
@@ -29,7 +29,7 @@ public class EnderecoDao {
     }
 
     public Endereco buscarPorId(int id) throws SQLException {
-        String sql = "SELECT id, cliente_id, rua, numero, cidade, estado, cep FROM enderecos WHERE id = ?";
+        String sql = "SELECT id, cliente_id, rua, numero, cidade, estado, cep, bairro FROM enderecos WHERE id = ?";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -37,7 +37,7 @@ public class EnderecoDao {
                 if (rs.next()) {
                     return new Endereco(
                         rs.getInt("id"), rs.getInt("cliente_id"), rs.getString("estado"),
-                        rs.getString("cidade"), rs.getString("cep"), rs.getString("rua"), rs.getString("numero")
+                        rs.getString("cidade"), rs.getString("cep"), rs.getString("rua"), rs.getString("numero"), rs.getString("bairro")
                     );
                 }
             }
@@ -46,7 +46,7 @@ public class EnderecoDao {
     }
 
     public boolean atualizar(Endereco endereco) throws SQLException {
-        String sql = "UPDATE enderecos SET rua = ?, numero = ?, cidade = ?, estado = ?, cep = ? WHERE id = ?";
+        String sql = "UPDATE enderecos SET rua = ?, numero = ?, cidade = ?, estado = ?, cep = ?, bairro = ? WHERE id = ?";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, endereco.getRua());
@@ -54,13 +54,14 @@ public class EnderecoDao {
             ps.setString(3, endereco.getCidade());
             ps.setString(4, endereco.getEstado());
             ps.setString(5, endereco.getCep());
-            ps.setInt(6, endereco.getId());
+            ps.setString(6, endereco.getBairro());
+            ps.setInt(7, endereco.getId());
             return ps.executeUpdate() > 0;
         }
     }
 
     public void inserir(Endereco endereco) throws SQLException {
-        String sql = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO enderecos (cliente_id, rua, numero, cidade, estado, cep, bairro) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id";
         try (Connection con = ConnectionService.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, endereco.getClienteId());
@@ -69,6 +70,7 @@ public class EnderecoDao {
             ps.setString(4, endereco.getCidade());
             ps.setString(5, endereco.getEstado());
             ps.setString(6, endereco.getCep());
+            ps.setString(7, endereco.getBairro());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     endereco.setId(rs.getInt(1));

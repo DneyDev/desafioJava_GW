@@ -36,6 +36,7 @@
 
     String rua = formularioEnviado ? request.getParameter("rua") : "";
     String numero = formularioEnviado ? request.getParameter("numero") : "";
+    String bairro = formularioEnviado ? request.getParameter("bairro") : "";
     String cidade = formularioEnviado ? request.getParameter("cidade") : "";
     String estado = formularioEnviado ? request.getParameter("estado") : "MG";
     String cep = formularioEnviado ? request.getParameter("cep") : "";
@@ -174,6 +175,17 @@
                                    class="form-control"
                                    maxlength="10"
                                    value="<%= escHtml(numero) %>"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input id="bairro"
+                                   type="text"
+                                   name="bairro"
+                                   class="form-control"
+                                   maxlength="100"
+                                   value="<%= escHtml(bairro) %>"
                                    required>
                         </div>
 

@@ -138,9 +138,7 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="origemTipo">
-                            Tipo de pessoa <span>*</span>
-                        </label>
+                        <label for="origemTipo">Tipo de pessoa</label>
 
                         <select id="origemTipo" name="origemTipo"
                                 class="form-control" required>
@@ -160,9 +158,7 @@
                     </div>
 
                     <div class="form-group span-all">
-                        <label for="origemNome">
-                            Nome / razão social <span>*</span>
-                        </label>
+                        <label for="origemNome">Nome / razão social</label>
                         <input id="origemNome" name="origemNome"
                                type="text" class="form-control"
                                maxlength="255"
@@ -172,21 +168,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="origemDocumento">
-                            CPF / CNPJ <span>*</span>
-                        </label>
+                        <label for="origemDocumento">CPF / CNPJ</label>
                         <input id="origemDocumento" name="origemDocumento"
+                               data-mascara="###.###.###-##"
+                               placeholder="000.000.000-00"
                                type="text" class="form-control"
-                               maxlength="18"
+                               maxlength="18" inputmode="numeric"
                                value="<%= remetenteAtual == null
                                    ? "" : escHtml(remetenteAtual.getDocumento()) %>"
                                required>
                     </div>
 
                     <div class="form-group">
-                        <label for="origemEmail">
-                            E-mail do remetente <span>*</span>
-                        </label>
+                        <label for="origemEmail">E-mail do remetente</label>
                         <input id="origemEmail" name="origemEmail"
                                type="email" class="form-control"
                                maxlength="255"
@@ -216,6 +210,18 @@
                                maxlength="10"
                                value="<%= origemAtual == null
                                    ? "" : escHtml(origemAtual.getNumero()) %>"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="origemBairro">Bairro</label>
+                        <input id="origemBairro"
+                               type="text"
+                               name="origemBairro"
+                               class="form-control"
+                               maxlength="100"
+                               value="<%= origemAtual == null
+                                   ? "" : escHtml(origemAtual.getBairro()) %>"
                                required>
                     </div>
 
@@ -255,8 +261,10 @@
                     <div class="form-group">
                         <label for="origemCep">CEP</label>
                         <input id="origemCep" name="origemCep"
+                               data-mascara="#####-###"
+                               placeholder="00000-000"
                                type="text" class="form-control"
-                               maxlength="9"
+                               maxlength="9" inputmode="numeric"
                                value="<%= origemAtual == null
                                    ? "" : escHtml(origemAtual.getCep()) %>"
                                required>
@@ -367,5 +375,22 @@
             })();
         </script>
     <% } %>
+    <script src="${pageContext.request.contextPath}/assets/js/mascaras.js"></script>
+    <script>
+        (function () {
+            var tipo = document.getElementById('origemTipo');
+            var documento = document.getElementById('origemDocumento');
+
+            function atualizarDocumento() {
+                var pj = tipo.value === 'PJ';
+                documento.dataset.mascara = pj ? '##.###.###/####-##' : '###.###.###-##';
+                documento.placeholder = pj ? '00.000.000/0001-00' : '000.000.000-00';
+                window.aplicarMascara(documento);
+            }
+
+            tipo.addEventListener('change', atualizarDocumento);
+            atualizarDocumento();
+        })();
+    </script>
 </body>
 </html>

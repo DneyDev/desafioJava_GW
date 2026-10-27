@@ -177,6 +177,10 @@ public class ClienteValid implements Valid<Cliente> {
                     erros,
                     validarCampo(end.getNumero(), "Número", 10)
                 );
+                addSeErro(
+                    erros,
+                    validarCampo(end.getBairro(), "Bairro", 100)
+                );
             }
         }
         return erros;

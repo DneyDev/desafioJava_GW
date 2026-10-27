@@ -20,6 +20,7 @@ public class EnderecoValid implements Valid<Endereco> {
         addSeErro(erros, clienteValid.validarCep(endereco.getCep()));
         addSeErro(erros, clienteValid.validarCampo(endereco.getRua(), "Rua", 255));
         addSeErro(erros, clienteValid.validarCampo(endereco.getNumero(), "Número", 10));
+        addSeErro(erros, clienteValid.validarCampo(endereco.getBairro(), "Bairro", 100));
         return erros;
     }
 

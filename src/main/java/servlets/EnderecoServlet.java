@@ -117,7 +117,8 @@ public class EnderecoServlet extends HttpServlet {
                     ? ""
                     : request.getParameter("cep").trim(),
                 request.getParameter("rua").trim(),
-                request.getParameter("numero").trim()
+                request.getParameter("numero").trim(),
+                request.getParameter("bairro").trim()
             );
             endereco.setClienteId(clienteId);
             endereco.setId(id);

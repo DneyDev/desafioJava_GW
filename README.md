@@ -106,6 +106,7 @@ erDiagram
         varchar cidade
         char estado
         char cep
+        varchar bairro
     }
     produtos {
         int id PK
@@ -128,6 +129,7 @@ erDiagram
         varchar origem_cidade
         char origem_estado
         char origem_cep
+        varchar origem_bairro
         int endereco_destino_id FK
         char codigo_rastreio
         varchar status

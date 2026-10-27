@@ -20,7 +20,8 @@ CREATE TABLE enderecos (
     numero VARCHAR(10) NOT NULL,
     cidade VARCHAR(100) NOT NULL,
     estado CHAR(2) NOT NULL,
-    cep CHAR(8) NOT NULL
+    cep CHAR(8) NOT NULL,
+    bairro VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE produtos (
@@ -50,20 +51,12 @@ CREATE TABLE entregas (
     origem_cidade VARCHAR(100) NOT NULL,
     origem_estado CHAR(2) NOT NULL,
     origem_cep CHAR(8) NOT NULL,
+    origem_bairro VARCHAR(100) NOT NULL,
     endereco_destino_id INT NOT NULL
         REFERENCES enderecos(id) ON DELETE RESTRICT,
     codigo_rastreio CHAR(8) NOT NULL UNIQUE,
-    status VARCHAR(20) NOT NULL DEFAULT 'Pendente'
-        CHECK (
-            status IN (
-                'Pendente',
-                'Em transito',
-                'Entregue',
-                'Cancelada'
-            )
-        )
+    status VARCHAR(20) NOT NULL DEFAULT 'Pendente' CHECK ( status IN ('Pendente','Em transito','Entregue','Cancelada'))
 );
-
 CREATE TABLE itens_entrega (
     entrega_id INT NOT NULL
         REFERENCES entregas(id) ON DELETE CASCADE,

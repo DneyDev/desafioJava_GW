@@ -100,8 +100,9 @@ public class ClientesServlet extends HttpServlet {
                 cep = cep == null ? "" : cep.trim();
                 String rua = request.getParameter("rua").trim();
                 String numero = request.getParameter("numero").trim();
+                String bairro = request.getParameter("bairro").trim();
                 enderecos.add(
-                    new Endereco(estado, cidade, cep, rua, numero)
+                    new Endereco(estado, cidade, cep, rua, numero, bairro)
                 );
             }
             TipoCliente tipo = TipoCliente.valueOf(

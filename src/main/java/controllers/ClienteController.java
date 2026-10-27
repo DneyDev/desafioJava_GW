@@ -139,11 +139,19 @@ public class ClienteController {
             if (erro != null) System.out.println("Erro: " + erro);
         } while (erro != null);
 
+        String bairro;
+        do {
+            System.out.println("Bairro: ");
+            bairro = leitor.nextLine().trim();
+            erro = clienteValid.validarCampo(bairro, "Bairro", 100);
+            if (erro != null) System.out.println("Erro: " + erro);
+        } while (erro != null);
+
         estado = CodRastreioGen.paraSigla(estado);
         cep    = cep.replaceAll("\\D", "");
         email  = email.toLowerCase();
 
-        Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero);
+        Endereco endCliente = new Endereco(estado, cidade, cep, rua, numero, bairro);
         List<Endereco> enderecos = new ArrayList<>();
         enderecos.add(endCliente);
         

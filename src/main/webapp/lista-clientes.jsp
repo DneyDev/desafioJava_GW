@@ -1,3 +1,4 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="models.Cliente" %>
@@ -44,7 +45,32 @@
                                 <td><%= escHtml(cliente.getDocumento()) %></td>
                                 <td><%= escHtml(cliente.getEmail()) %></td>
                                 <td><%= cliente.getEnderecos() == null ? 0 : cliente.getEnderecos().size() %></td>
-                                <td><a class="btn-secondary" href="${pageContext.request.contextPath}/clientes?editar=<%= cliente.getId() %>">Editar</a></td>
+                                <td>
+                                    <div class="acoes">
+                                        <a class="btn-secondary"
+                                           href="${pageContext.request.contextPath}/clientes?editar=<%= cliente.getId() %>">
+                                            Editar
+                                        </a>
+
+                                        <form
+                                            action="${pageContext.request.contextPath}/clientes"
+                                            method="post"
+                                            onsubmit="return confirm('Excluir permanentemente este cliente? A exclusão será bloqueada se ele possuir entregas vinculadas ou se algum de seus endereços for usado como destino de uma entrega.')">
+
+                                            <input type="hidden"
+                                                   name="acao"
+                                                   value="excluir">
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="<%= cliente.getId() %>">
+
+                                            <button type="submit" class="btn-danger">
+                                                Excluir
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <%     }
                            } else { %>

@@ -7,6 +7,21 @@
         if (s == null) return "";
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
     }
+
+    private static String formatarDocumento(String doc) {
+        if (doc == null) return "";
+        String d = doc.replaceAll("\\D", "");
+
+        if (d.length() == 11) {
+            return d.substring(0, 3) + "." + d.substring(3, 6) + "."
+                 + d.substring(6, 9) + "-" + d.substring(9);
+        }
+        if (d.length() == 14) {
+            return d.substring(0, 2) + "." + d.substring(2, 5) + "."
+                 + d.substring(5, 8) + "/" + d.substring(8, 12) + "-" + d.substring(12);
+        }
+        return doc;
+    }
 %>
 <%
     List<Cliente> clientes = (List<Cliente>) request.getAttribute("clientes");
@@ -42,7 +57,7 @@
                             <tr>
                                 <td><%= escHtml(cliente.getName()) %></td>
                                 <td><%= cliente.getTipo() == null ? "" : escHtml(cliente.getTipo().name()) %></td>
-                                <td><%= escHtml(cliente.getDocumento()) %></td>
+                                <td><%= escHtml(formatarDocumento(cliente.getDocumento())) %></td>
                                 <td><%= escHtml(cliente.getEmail()) %></td>
                                 <td><%= cliente.getEnderecos() == null ? 0 : cliente.getEnderecos().size() %></td>
                                 <td>
